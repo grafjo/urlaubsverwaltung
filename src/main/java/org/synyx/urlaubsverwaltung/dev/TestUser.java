@@ -2,6 +2,8 @@ package org.synyx.urlaubsverwaltung.dev;
 
 import org.synyx.urlaubsverwaltung.core.person.Role;
 
+import static org.synyx.urlaubsverwaltung.core.person.Role.API_USER;
+
 
 /**
  * Test users that can be used to sign in with when test data is created.
@@ -14,7 +16,8 @@ enum TestUser {
     DEPARTMENT_HEAD("testHead"),
     SECOND_STAGE_AUTHORITY("testManager"),
     BOSS("testBoss"),
-    OFFICE("test");
+    OFFICE("test"),
+    API_USER("testApi");
 
     private String login;
 
@@ -48,6 +51,9 @@ enum TestUser {
 
             case OFFICE:
                 return new Role[] { Role.USER, Role.BOSS, Role.OFFICE };
+
+            case API_USER:
+                return new Role[] { Role.USER, Role.API_USER };
 
             default:
                 return new Role[] { Role.USER };

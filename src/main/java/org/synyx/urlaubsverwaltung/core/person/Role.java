@@ -13,5 +13,6 @@ public enum Role {
     SECOND_STAGE_AUTHORITY,
     BOSS,
     OFFICE,
+    API_USER,
     INACTIVE
 }
