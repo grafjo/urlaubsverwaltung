@@ -54,6 +54,7 @@
         <google-api-client.version>1.23.0</google-api-client.version>
         <google-api-services-calendar.version>v3-rev281-1.23.0</google-api-services-calendar.version>
         <webjars-bootstrap.version>3.3.7</webjars-bootstrap.version>
+        <webjars-font-awesome.version>4.5.0</webjars-font-awesome.version>
     </properties>
 
     <scm>
@@ -255,7 +256,11 @@
             <artifactId>bootstrap</artifactId>
             <version>${webjars-bootstrap.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>font-awesome</artifactId>
+            <version>${webjars-font-awesome.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
