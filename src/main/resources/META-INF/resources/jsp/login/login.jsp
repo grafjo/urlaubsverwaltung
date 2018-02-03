@@ -17,7 +17,7 @@
         <link rel='stylesheet' href='/webjars/font-awesome/4.5.0/css/font-awesome.min.css'>
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
         <link rel="stylesheet" type="text/css" href="<spring:url value='/css/login.css' />" />
-        <script src="<spring:url value='/lib/jquery/js/jquery-3.3.1.min.js' />" type="text/javascript" ></script>
+        <script src="/webjars/jquery/3.3.1/js/jquery.min.js" type="text/javascript"></script>
         <script src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
         <script type="text/javascript">
             $(document).ready(function() {
