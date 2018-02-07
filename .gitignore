@@ -27,3 +27,8 @@ velocity.log*
 
 # ignore oauth-file with credentials for testing
 src/test/resources/google_oauth.properties
+
+#JavaScript tooling
+node_modules
+yarn.lock
+src/main/webapp/target/
