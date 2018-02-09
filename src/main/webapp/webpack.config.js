@@ -2,22 +2,26 @@ var packageJSON = require('./package.json');
 var path = require('path');
 var webpack = require('webpack');
 
-console.log(__dirname);
-console.log(packageJSON.name);
-console.log(packageJSON.version);
-
 const PATHS = {
-    build: path.join(__dirname, 'target', 'classes', 'META-INF', 'resources', 'webjars', packageJSON.name, packageJSON.version)
+    build: path.join(__dirname, '../../../target/classes/static/lib')
 };
 
 module.exports = {
-    entry: './src/index.js',
+    entry: {
+        head: './src/head-bundle.js',
+        login: './src/login-bundle.js'
+    },
+
+
 
     output: {
-        path: PATHS.build,
-        filename: 'app-bundle.js'
+        filename: '[name].js',
+        path: PATHS.build
     },
     module: {
+        rules: [
+            { parser: { amd: false } }
+        ],
         loaders: [
             { test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/ },
             { test: /\.jsx$/, loader: 'babel-loader', exclude: /node_modules/ }
@@ -26,5 +30,14 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.jsx'],
         modules: ['node_modules','src/main/webapp']
-    }
+    },
+
+    plugins: [
+        new webpack.ProvidePlugin({
+            jQuery: 'jquery',
+            $: 'jquery',
+            jquery: 'jquery'
+        })
+    ]
+
 };

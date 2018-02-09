@@ -1,0 +1,9 @@
+require('jquery-ui');
+require('jquery-migrate');
+require('timepicker');
+require('tablesorter');
+require('moment');
+require('underscore');
+require('list.js');
+require('datejs');
+require('bootstrap');
