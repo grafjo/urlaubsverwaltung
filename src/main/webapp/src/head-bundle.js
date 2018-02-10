@@ -1,6 +1,8 @@
 window.$ = $;
 window.jQuery = jQuery;
-require('jquery-ui');
+//require('jquery-ui');
+require('jquery-ui/ui/version');
+require('jquery-ui/ui/widgets/datepicker');
 require('jquery-migrate');
 require('timepicker');
 require('tablesorter');
