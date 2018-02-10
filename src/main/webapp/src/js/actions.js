@@ -22,3 +22,7 @@ function tooltip() {
   $('[data-title]').attr('data-placement', 'bottom').tooltip();
 }
 
+module.exports = {
+  tooltip
+};
+

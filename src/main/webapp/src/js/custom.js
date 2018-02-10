@@ -194,3 +194,16 @@ function vacationTypeChanged(value) {
   }
 
 }
+
+module.exports = {
+    count,
+    maxChars,
+    navigate,
+    formatNumber,
+    sendGetDaysRequest,
+    sendGetDaysRequestForTurnOfTheYear,
+    buildUrl,
+    getUrlParam,
+    sendGetDepartmentVacationsRequest,
+    vacationTypeChanged
+};

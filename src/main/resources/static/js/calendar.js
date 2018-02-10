@@ -633,7 +633,7 @@ $(function() {
 
             display: function(date) {
                 $datepicker.html( renderCalendar(date)).addClass('unselectable');
-                tooltip();
+                window.app.action.tooltip();
             },
 
             displayNext: function() {
@@ -650,7 +650,7 @@ $(function() {
                 var $nextMonth = $(renderMonth( moment().year(year).month(month).add('M', 1)));
 
                 $lastMonth.after($nextMonth);
-                tooltip();
+                window.app.action.tooltip();
             },
 
             displayPrev: function() {
@@ -667,7 +667,7 @@ $(function() {
                 var $prevMonth = $(renderMonth( moment().year(year).month(month).subtract('M', 1)));
 
                 $firstMonth.before($prevMonth);
-                tooltip();
+                window.app.action.tooltip();
             }
         };
 

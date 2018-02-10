@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="<spring:url value='/lib/font-awesome/css/font-awesome-4.5.0.min.css' />" />
 <link rel="stylesheet" type="text/css" href="<spring:url value='/css/main.css' />" />
 <script src="<spring:url value='/lib/head.js' />" type="text/javascript" ></script>
+
+<!--
 <script src="<spring:url value='/js/custom.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/actions.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/back-button.js' />" type="text/javascript" ></script>
@@ -17,4 +19,5 @@
 <script src="<spring:url value='/js/textarea.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/popover.js' />" type="text/javascript" ></script>
 <script src="<spring:url value='/js/gravatar.js' />" type="text/javascript" ></script>
+-->
 <script src="<spring:url value='/js/polyfills.js' />" type="text/javascript" ></script>

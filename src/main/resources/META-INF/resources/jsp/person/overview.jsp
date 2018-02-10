@@ -91,7 +91,7 @@
 
                 // calendar is initialised when moment.js AND moment.language.js are loaded
                 function initCalendar() {
-                    var year = getUrlParam("year");
+                    var year = window.app.custom.getUrlParam("year");
                     var date = moment();
 
                     if (year.length > 0 && year != date.year()) {
