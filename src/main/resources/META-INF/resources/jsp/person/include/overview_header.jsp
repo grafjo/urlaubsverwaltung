@@ -18,7 +18,14 @@
         </c:otherwise>
     </c:choose>
 
-    <uv:year-selector year="${displayYear}" hrefPrefix="${URL_PREFIX}/staff/${person.id}/overview?year="/>
+    <div id="year-selection" class="legend-dropdown dropdown">
+        <a id="dropdownLabel" href="#" data-toggle="dropdown"
+           aria-haspopup="true" role="button" aria-expanded="false">
+            <c:out value="${displayYear}" /><span class="caret"></span>
+        </a>
+
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownLabel"></ul>
+    </div>
 
     <uv:print/>
 

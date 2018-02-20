@@ -1,3 +1,5 @@
+require('./actions');
+
 $(function() {
 
     var $datepicker = $('#datepicker');
@@ -908,3 +910,4 @@ $(function() {
     };
 
 });
+

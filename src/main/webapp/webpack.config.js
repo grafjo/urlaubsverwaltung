@@ -11,13 +11,11 @@ module.exports = {
         head: './src/head-bundle.js',
         login: './src/login-bundle.js'
     },
-
-
-
     output: {
         filename: '[name].js',
         path: PATHS.build
     },
+
     module: {
         rules: [
             { parser: { amd: false } }
