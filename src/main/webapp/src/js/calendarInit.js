@@ -1,3 +1,7 @@
+var moment = require('moment');
+
+moment.locale('de-DE');
+
 $(function () {
 
     var hrefPrefix = window.calendarInit.hrefPrefix;

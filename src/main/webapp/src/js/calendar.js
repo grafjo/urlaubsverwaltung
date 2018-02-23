@@ -1,4 +1,5 @@
 require('./actions');
+var moment = require('moment');
 
 $(function() {
 

@@ -21,8 +21,6 @@
         window.calendarInit.apiPrefix = "<spring:url value='/api' />";
     </script>
     <uv:head />
-    <script type="text/javascript" src="<spring:url value='/lib/moment/moment-2.5.1.min.js' />"></script>
-    <script type="text/javascript" src="<spring:url value='/lib/moment/moment.lang.de-2.5.1.js' />"></script>
 
 </head>
 

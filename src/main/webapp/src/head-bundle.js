@@ -6,7 +6,6 @@ require('jquery-ui/ui/widgets/datepicker');
 require('jquery-migrate');
 require('timepicker');
 require('tablesorter');
-require('moment');
 window._ = require('underscore');
 require('list.js');
 require('datejs');
