@@ -7,16 +7,26 @@
 <%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@taglib prefix="uv" tagdir="/WEB-INF/tags" %>
 
+<spring:url var="URL_PREFIX" value="/web"/>
+
 <html>
 
 <head>
+    <script>
+        window.calendarInit = {};
+        window.calendarInit.hrefPrefix = "<c:out value='${URL_PREFIX}/staff/${person.id}/overview?year='/>";
+        window.calendarInit.datepickerLocale = "${pageContext.response.locale.language}";
+        window.calendarInit.personId = "<c:out value='${person.id}' />";
+        window.calendarInit.webPrefix = "<spring:url value='/web' />";
+        window.calendarInit.apiPrefix = "<spring:url value='/api' />";
+    </script>
     <uv:head />
     <script type="text/javascript" src="<spring:url value='/lib/moment/moment-2.5.1.min.js' />"></script>
     <script type="text/javascript" src="<spring:url value='/lib/moment/moment.lang.de-2.5.1.js' />"></script>
+
 </head>
 
 <body>
-<spring:url var="URL_PREFIX" value="/web"/>
 
 <sec:authorize access="hasAuthority('OFFICE')">
     <c:set var="IS_OFFICE" value="true"/>
@@ -35,7 +45,35 @@
         <div class="row">
 
             <div class="col-xs-12">
-                <%@include file="include/overview_header.jsp" %>
+                <legend>
+
+                    <spring:message code="overview.title"/>
+
+                    <c:choose>
+                        <c:when test="${!empty param.year}">
+                            <c:set var="displayYear" value="${param.year}"/>
+                        </c:when>
+                        <c:otherwise>
+                            <c:set var="displayYear" value="${year}"/>
+                        </c:otherwise>
+                    </c:choose>
+                    <div id="year-selection" class="legend-dropdown dropdown">
+                        <a id="dropdownLabel" href="#" data-toggle="dropdown"
+                           aria-haspopup="true" role="button" aria-expanded="false">
+                            <c:out value="${displayYear}" /><span class="caret"></span>
+                        </a>
+
+                        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownLabel"></ul>
+                    </div>
+
+                    <uv:print/>
+
+                    <a href="${URL_PREFIX}/staff/${person.id}" class="fa-action pull-right" style="margin-top: 1px"
+                       data-title="<spring:message code="action.details"/>">
+                        <i class="fa fa-list-alt"></i>
+                    </a>
+
+                </legend>
             </div>
 
         </div>
@@ -79,14 +117,6 @@
             </div>
         </div>
         </c:if>
-
-        <script>
-            window.calendarInit = {};
-            window.calendarInit.datepickerLocale = "${pageContext.response.locale.language}";
-            window.calendarInit.personId = '<c:out value="${person.id}" />';
-            window.calendarInit.webPrefix = "<spring:url value='/web' />";
-            window.calendarInit.apiPrefix = "<spring:url value='/api' />";
-        </script>
 
         <div class="row">
             <div class="col-xs-12">

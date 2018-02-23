@@ -1,14 +1,16 @@
 $(function () {
 
+    var hrefPrefix = window.calendarInit.hrefPrefix;
+
     var currentYear = new Date().getFullYear();
 
     var $dropdown = $('#year-selection').find('.dropdown-menu');
 
-    $dropdown.append('<li><a href="${hrefPrefix}' + (currentYear + 1) + '">' + (currentYear + 1) + '</a></li>');
-    $dropdown.append('<li><a href="${hrefPrefix}' + currentYear + '">' + currentYear + '</a></li>');
+    $dropdown.append('<li><a href="'+ hrefPrefix + (currentYear + 1) + '">' + (currentYear + 1) + '</a></li>');
+    $dropdown.append('<li><a href="'+ hrefPrefix + currentYear + '">' + currentYear + '</a></li>');
 
     for (var i = 1; i < 10; i++) {
-        $dropdown.append('<li><a href="${hrefPrefix}' + (currentYear - i) + '">' + (currentYear - i) + '</a></li>');
+        $dropdown.append('<li><a href="'+ hrefPrefix + (currentYear - i) + '">' + (currentYear - i) + '</a></li>');
     }
 
 });
