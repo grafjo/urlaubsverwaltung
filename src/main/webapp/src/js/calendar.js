@@ -498,10 +498,10 @@ $(function() {
 
                 months: function() {
                     var html = '';
-                    var d = moment(date).subtract ('M', 4);
+                    var d = moment(date).subtract (4, 'M');
                     while(monthsToShow--) {
                         html += renderMonth(d);
-                        d.add('M', 1);
+                        d.add(1, 'M');
                     }
                     return html;
                 }
@@ -535,7 +535,7 @@ $(function() {
                     var html = '';
                     while(d.month() === m) {
                         html += renderWeek(d);
-                        d.add('w', 1);
+                        d.add(1, 'w');
                         d.weekday(0);
                     }
                     return html;
@@ -557,12 +557,12 @@ $(function() {
 
             return render(TMPL.weekdays, {
                 0: d.format('dd'),
-                1: d.add('d', 1).format('dd'),
-                2: d.add('d', 1).format('dd'),
-                3: d.add('d', 1).format('dd'),
-                4: d.add('d', 1).format('dd'),
-                5: d.add('d', 1).format('dd'),
-                6: d.add('d', 1).format('dd')
+                1: d.add(1, 'd').format('dd'),
+                2: d.add(1, 'd').format('dd'),
+                3: d.add(1, 'd').format('dd'),
+                4: d.add(1, 'd').format('dd'),
+                5: d.add(1, 'd').format('dd'),
+                6: d.add(1, 'd').format('dd')
             });
         }
 
@@ -577,7 +577,7 @@ $(function() {
 
                 if (Number (dayIdx) === d.weekday() && m === d.month()) {
                     html = renderDay(d);
-                    d.add('d', 1);
+                    d.add(1, 'd');
                 }
 
                 return html;
@@ -650,7 +650,7 @@ $(function() {
                 var month = Number ($lastMonth.data(DATA.month));
                 var year  = Number ($lastMonth.data(DATA.year));
 
-                var $nextMonth = $(renderMonth( moment().year(year).month(month).add('M', 1)));
+                var $nextMonth = $(renderMonth( moment().year(year).month(month).add(1, 'M')));
 
                 $lastMonth.after($nextMonth);
                 window.app.action.tooltip();
@@ -667,7 +667,7 @@ $(function() {
                 var month = Number ($firstMonth.data(DATA.month));
                 var year  = Number ($firstMonth.data(DATA.year));
 
-                var $prevMonth = $(renderMonth( moment().year(year).month(month).subtract('M', 1)));
+                var $prevMonth = $(renderMonth( moment().year(year).month(month).subtract(1, 'M')));
 
                 $firstMonth.before($prevMonth);
                 window.app.action.tooltip();
@@ -758,7 +758,7 @@ $(function() {
                 var date = moment()
                     .year ($month.data(DATA.year))
                     .month($month.data(DATA.month))
-                    .add('M', 1);
+                    .add(1, 'M');
 
                 $.when(
                     holidayService.fetchPublic   ( date.year() ),
@@ -776,7 +776,7 @@ $(function() {
                 var date = moment()
                     .year ($month.data(DATA.year))
                     .month($month.data(DATA.month))
-                    .subtract('M', 1);
+                    .subtract(1, 'M');
 
                 $.when(
                     holidayService.fetchPublic   ( date.year() ),
