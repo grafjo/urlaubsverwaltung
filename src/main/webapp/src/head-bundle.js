@@ -14,6 +14,7 @@ require('bootstrap');
 window.app = {};
 window.app.custom = require('./js/custom.js');
 window.app.action = require('./js/actions.js');
+require('./js/polyfills');
 require('./js/back-button.js');
 require('./js/feedback.js');
 require('./js/sortable.js');
