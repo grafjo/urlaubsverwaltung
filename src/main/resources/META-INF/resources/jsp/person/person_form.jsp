@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <uv:head />
+    <%@include file="include/head.jsp" %><uv:head />
 </head>
 
 <body>

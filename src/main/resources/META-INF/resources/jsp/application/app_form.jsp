@@ -13,7 +13,7 @@
 <html>
 
 <head>
-    <uv:head/>
+    <%@include file="../person/include/head.jsp" %><uv:head/>
     <link rel="stylesheet" type="text/css" href="<spring:url value='/lib/jquery/css/ui-lightness/jquery.timepicker-1.11.13.min.css' />" />
     <script type="text/javascript" src="<spring:url value='/lib/jquery/js/jquery.timepicker-1.11.13.min.js' />"></script>
 
@@ -47,13 +47,13 @@
                 var startDate = $("#from").datepicker("getDate");
                 var endDate = $("#to").datepicker("getDate");
 
-                sendGetDaysRequest(urlPrefix,
+                window.app.custom.sendGetDaysRequest(urlPrefix,
                         startDate,
                         endDate,
                         $('input:radio[name=dayLength]:checked').val(),
                         personId, ".days");
 
-                sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
+                window.app.custom.sendGetDepartmentVacationsRequest(urlPrefix, startDate, endDate, personId, "#departmentVacations");
             }
 
             <%-- Timepicker for optional startTime and endTime --%>

@@ -24,8 +24,8 @@
 <html>
 
 <head>
-<uv:head />
-<%@include file="include/app-detail-elements/vacation_overview_js.jsp"%>
+	<%@include file="../person/include/head.jsp" %><uv:head />
+	<%@include file="include/app-detail-elements/vacation_overview_js.jsp"%>
 </head>
 
 <body>

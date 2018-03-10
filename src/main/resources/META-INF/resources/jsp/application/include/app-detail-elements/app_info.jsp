@@ -99,7 +99,7 @@
                     var from = new Date(startDate);
                     var to = new Date(endDate);
 
-                    sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days");
+                    window.app.action.sendGetDaysRequestForTurnOfTheYear("<spring:url value='/api' />", from, to, dayLength, personId, ".days");
 
                   </c:if>
                 });

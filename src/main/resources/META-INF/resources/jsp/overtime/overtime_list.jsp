@@ -6,7 +6,7 @@
 
 <html>
 <head>
-    <uv:head/>
+    <%@include file="../person/include/head.jsp" %><uv:head/>
 </head>
 <body>
 

@@ -6,7 +6,7 @@
 
 <html>
 <head>
-    <uv:head />
+    <%@include file="../person/include/head.jsp" %><uv:head />
 
     <script src="<spring:url value='/lib/date-de-DE-1.0-Alpha-1.js' />" type="text/javascript"></script>
     <script src="<spring:url value='/js/datepicker.js' />" type="text/javascript" ></script>

@@ -12,7 +12,7 @@
 <html>
 
     <head>
-        <uv:head />
+        <%@include file="../person/include/head.jsp" %><uv:head />
 
         <spring:url var="URL_PREFIX" value="/web" />
 

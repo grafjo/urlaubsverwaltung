@@ -13,7 +13,7 @@
     <spring:url var="URL_PREFIX" value="/web" />
 
     <head>
-        <uv:head />
+        <%@include file="include/head.jsp" %><uv:head />
         <script src="<spring:url value='/lib/list-1.3.0.min.js' />" type="text/javascript"></script>
     </head>
 

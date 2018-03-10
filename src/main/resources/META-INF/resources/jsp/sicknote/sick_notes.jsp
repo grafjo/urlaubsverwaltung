@@ -11,7 +11,7 @@
 <html>
 
 <head>
-    <uv:head />
+    <%@include file="../person/include/head.jsp" %><uv:head />
     <script type="text/javascript">
         $(document).ready(function() {
 

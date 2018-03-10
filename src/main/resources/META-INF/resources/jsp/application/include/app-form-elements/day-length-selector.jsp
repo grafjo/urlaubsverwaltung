@@ -18,8 +18,8 @@
             var startDate = $('input#from').datepicker("getDate");
             var toDate = $('input#to').datepicker("getDate");
 
-            sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days");
-            sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
+            window.app.custom.sendGetDaysRequest(urlPrefix, startDate, toDate, dayLength, personId, ".days");
+            window.app.custom.sendGetDepartmentVacationsRequest(urlPrefix, startDate, toDate, personId, "#departmentVacations");
 
         });
 
