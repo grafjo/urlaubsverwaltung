@@ -23,12 +23,20 @@ export async function setup () {
     // and we're able to attach additional custom stuff
 
     // importing jquery which is used in application
-    const $ = await import('../../main/resources/static/lib/jquery/js/jquery-3.3.1');
+    //const $ = await import('../../main/webapp/node_modules/jquery/dist/jquery');
+
+    const $ = await import('jquery');
     window.jQuery = window.$ = $;
 
+    window.app = {};
+    window.app.action = {};
     // defined in 'actions.js' as global function
     // setting as spy function to assert things in the tests
-    window.tooltip = jest.fn();
+    window.app.action.tooltip = jest.fn();
+
+    jest.mock('./../../main/webapp/src/js/actions', () => {
+        // return value will be ignored at the moment
+    });
 
     // trigger ready event
     // so "modules" registered via $(function() { /* ... */ }) are executed immediately on file import

@@ -67,7 +67,7 @@ describe ('calendar', () => {
 
         // loading calendar.js registers a jQuery ready callback
         // which will be executed asynchronously
-        await import('../../main/resources/static/js/calendar.js');
+        await import('../../main/webapp/src/js/calendar.js');
 
         // therefore we have to wait till ready callbacks are invoked
         return waitForFinishedJQueryReadyCallbacks();
