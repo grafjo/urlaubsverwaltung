@@ -8,7 +8,11 @@ require('timepicker');
 require('tablesorter');
 window._ = require('underscore');
 require('list.js');
-require('datejs');
+// is producing
+// head.js:71697 Uncaught RangeError: Maximum call stack size exceeded
+// at Date.$P.toString [as _toString] (head.js:71697)
+//require('datejs');
+
 require('bootstrap');
 
 window.app = {};
