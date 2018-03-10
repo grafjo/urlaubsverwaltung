@@ -136,7 +136,7 @@
                 <span id="text-comment"></span><spring:message code='action.comment.maxChars'/>
                 <form:textarea id="comment" rows="3" path="comment" class="form-control" cssErrorClass="form-control error"
                       onkeyup="count(this.value, 'text-comment');"
-                      onkeydown="maxChars(this,200); count(this.value, 'text-comment');"
+                      onkeydown="window.app.custom.maxChars(this,200); count(this.value, 'text-comment');"
                       placeholder="${COMMENT_PLACEHOLDER}"/>
                 <form:errors path="comment" cssClass="error"/>
             </div>
