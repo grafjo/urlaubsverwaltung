@@ -170,9 +170,11 @@ public class OverviewController {
 		Optional<Account> account = accountService.getHolidaysAccount(year, person);
 
 		if (account.isPresent()) {
-			model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(account.get(), accountService.getHolidaysAccount(year+1, person)));
-			model.addAttribute("account", account.get());
-			model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now()));
+			Account acc = account.get();
+            Optional<Account> nextYear = accountService.getHolidaysAccount(year+1, person);
+			model.addAttribute("vacationDaysLeft", vacationDaysService.getVacationDaysLeft(acc));
+			model.addAttribute("account", acc);
+			model.addAttribute(PersonConstants.BEFORE_APRIL_ATTRIBUTE, DateUtil.isBeforeApril(DateMidnight.now(), acc.getYear()));
 		}
 	}
 
