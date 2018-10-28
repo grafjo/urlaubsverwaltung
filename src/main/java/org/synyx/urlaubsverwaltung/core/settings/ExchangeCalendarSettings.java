@@ -1,9 +1,8 @@
 package org.synyx.urlaubsverwaltung.core.settings;
 
-import java.util.Base64;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.util.Base64;
 
 
 /**
@@ -25,6 +24,9 @@ public class ExchangeCalendarSettings {
 
     @Column(name = "calendar_ews_sendInvitationActive")
     private boolean sendInvitationActive = false;
+
+    @Column(name = "calendar_ews_timezone")
+    private String timezone;
 
 
     public String getEmail() {
@@ -80,5 +82,13 @@ public class ExchangeCalendarSettings {
     public void setSendInvitationActive(boolean sendInvitationActive) {
 
         this.sendInvitationActive = sendInvitationActive;
+    }
+
+    public String getTimezone() {
+        return timezone;
+    }
+
+    public void setTimezone(String timezone) {
+        this.timezone = timezone;
     }
 }
