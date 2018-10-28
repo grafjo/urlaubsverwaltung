@@ -9,7 +9,7 @@
         </preConditions>
 
         <addColumn tableName="Settings">
-            <column name="calendar_ews_timezone" type="VARCHAR(255)"/>
+            <column name="calendar_ews_timezoneid" type="VARCHAR(255)"/>
         </addColumn>
     </changeSet>
 

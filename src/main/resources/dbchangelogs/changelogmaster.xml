@@ -54,5 +54,5 @@
     <include file="dbchangelogs/changelog-2.26.0-add-calendar-provider.xml"/>
     <include file="dbchangelogs/changelog-2.26.0-remove-exchange-active.xml"/>
     <include file="dbchangelogs/changelog-2.26.1-remove-google-redirect-url.xml"/>
-    <include file="dbchangelogs/changelog-2.29.0-add-exchange-calendar-timezone.xml"/>
+    <include file="dbchangelogs/changelog-2.29.0-add-exchange-calendar-timezoneid.xml"/>
 </databaseChangeLog>
