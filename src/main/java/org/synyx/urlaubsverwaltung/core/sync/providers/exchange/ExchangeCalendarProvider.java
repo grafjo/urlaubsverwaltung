@@ -41,6 +41,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
 
     private final MailService mailService;
     private final ExchangeService exchangeService;
+    private final ExchangeFactory exchangeFactory;
 
     private String credentialsMailAddress;
     private String credentialsPassword;
@@ -48,8 +49,15 @@ public class ExchangeCalendarProvider implements CalendarProvider {
     @Autowired
     public ExchangeCalendarProvider(MailService mailService) {
 
+        this(mailService, new ExchangeService(), new ExchangeFactory());
+    }
+
+    public ExchangeCalendarProvider(MailService mailService,
+                                    ExchangeService exchangeService, ExchangeFactory exchangeFactory) {
+
         this.mailService = mailService;
-        this.exchangeService = new ExchangeService();
+        this.exchangeService = exchangeService;
+        this.exchangeFactory = exchangeFactory;
     }
 
     @Override
@@ -62,7 +70,7 @@ public class ExchangeCalendarProvider implements CalendarProvider {
         try {
             CalendarFolder calendarFolder = findOrCreateCalendar(calendarName);
 
-            Appointment appointment = new Appointment(exchangeService);
+            Appointment appointment = this.exchangeFactory.getNewAppointment(exchangeService);
 
             fillAppointment(absence, appointment, calendarSettings.getExchangeCalendarSettings().getTimeZoneId());
 
