@@ -34,12 +34,25 @@ class AccountInteractionServiceImpl implements AccountInteractionService {
     }
 
     @Override
-    public Account createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo,
+    public synchronized Account createHolidaysAccount(Person person, DateMidnight validFrom, DateMidnight validTo,
         BigDecimal annualVacationDays, BigDecimal actualVacationDays, BigDecimal remainingDays,
         BigDecimal remainingDaysNotExpiring, String comment) {
 
-        Account account = new Account(person, validFrom.toDate(), validTo.toDate(), annualVacationDays, remainingDays,
-            remainingDaysNotExpiring, comment);
+        Optional<Account> optionalAccount = accountService.getHolidaysAccount(validFrom.getYear(), person);
+        Account account;
+
+        if (optionalAccount.isPresent()) {
+            account = optionalAccount.get();
+            // update available account
+            account.setAnnualVacationDays(annualVacationDays);
+            account.setRemainingVacationDays(remainingDays);
+            account.setRemainingVacationDaysNotExpiring(remainingDaysNotExpiring);
+            account.setComment(comment);
+        } else {
+            // create new account
+            account = new Account(person, validFrom.toDate(), validTo.toDate(), annualVacationDays, remainingDays,
+                    remainingDaysNotExpiring, comment);
+        }
 
         account.setVacationDays(actualVacationDays);
 
