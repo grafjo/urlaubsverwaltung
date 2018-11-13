@@ -16,9 +16,6 @@ public class SecurityTestUtil {
 
     public static boolean authorityForRoleExists(Collection<? extends GrantedAuthority> authorities, final Role role) {
 
-        return authorities.stream()
-            .filter(authority -> authority.getAuthority().equals(role.name()))
-            .findFirst()
-            .isPresent();
+        return authorities.stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_" + role.name()));
     }
 }

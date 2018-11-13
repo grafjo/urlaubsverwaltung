@@ -2,6 +2,10 @@ package org.synyx.urlaubsverwaltung.security;
 
 import org.apache.log4j.Logger;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -11,6 +15,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
+
+import org.springframework.stereotype.Service;
 
 import org.synyx.urlaubsverwaltung.core.person.Person;
 import org.synyx.urlaubsverwaltung.core.person.PersonService;
@@ -26,12 +32,15 @@ import java.util.stream.Collectors;
  *
  * @author  Daniel Hammann - <hammann@synyx.de>
  */
+@Service
+@ConditionalOnProperty(name = "auth", havingValue = "default")
 public class SimpleAuthenticationProvider implements AuthenticationProvider {
 
     private static final Logger LOG = Logger.getLogger(SimpleAuthenticationProvider.class);
 
     private final PersonService personService;
 
+    @Autowired
     public SimpleAuthenticationProvider(PersonService personService) {
 
         this.personService = personService;
@@ -61,8 +70,12 @@ public class SimpleAuthenticationProvider implements AuthenticationProvider {
         }
 
         Collection<Role> permissions = person.getPermissions();
-        Collection<GrantedAuthority> grantedAuthorities = permissions.stream().map((role) ->
-                    new SimpleGrantedAuthority(role.name())).collect(Collectors.toList());
+
+        // the default granted authority prefix can be configured, but will not at the moment
+        String grantedAuthorityPrefix = "ROLE_";
+        Collection<GrantedAuthority> grantedAuthorities = permissions.stream()
+                .map((role) -> new SimpleGrantedAuthority(grantedAuthorityPrefix + role.name()))
+                .collect(Collectors.toList());
 
         String userPassword = person.getPassword();
 
