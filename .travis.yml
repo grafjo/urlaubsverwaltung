@@ -18,6 +18,11 @@ deploy:
   script: ./mvnw compile jib:build -Djib.to.auth.username=$REGISTRY_USERNAME -Djib.to.auth.password=$REGISTRY_PASSWORD
   on:
     condition: tag IS present
+
+cache:
+  directories:
+    - $HOME/.m2
+
 env:
   global:
     - secure: "dHAWwjzSbw8wt9aZf2cs+mvWrYNLiyzXkCckYY2vGLUd1EtfJG4jB899FLiQeShvS+v+64xm8AEihZzAPq2Y2C3D0cpzKRQhvu1cfuGszyFxetyl9K0pl2t1EPSbOgo0T2c5ruk2XqPgRoKIxpHMSQRLPuk0DlFRR3SOeJP4obAH7PuDnOGkjmz9Bn7Fk9ZOGDZ2BDna2A+9L4mecQKYrOC4AGZm5dmF6Vr7Gt3GeGPKv6f3RhQAyKyRg+52wmerCWdyRQSnzR06F9M5Jd93FoZPL/IjcHQIMVseBDGrc4KTUaUmj3SxGHZwQ7V1BqtM6ENwhq7tFQvujX5x45pbxpspaIlQwfVuzwumukGVHjyBN0BtPhWf9yvmgpJntNNuZ96hlEuOSzl8+75jOV13ZRyU91r8SiiO8qKlK9odp2yAsMsepzjJsaCdY6Ki301xn97KTl4drdNIHo6BzBvMTKFeXjoXTO8ohpxJf/IKKwXqDfW2g2Z5N/vi5kIHbVf+2+fRruRABo6RIrWlyy4PS8NvgddYH7aIPnEWSeqAePZmTu+WxoNFZ/tD4arMu/zDSTac3SFYsbjfOHAHpjmlUTnNKeefPCoO68TBxsluE9Yn4wVbHAg4fdgxlTPh0bhIdKH+Ehc5KnHDGBTeSjHXj2TrIVgHvMp1iypepXYWOY0=" # REGISTRY_USERNAME
