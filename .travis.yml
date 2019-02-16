@@ -1,13 +1,29 @@
 language: java
 
-script: ./mvnw verify
-
-after_success:
-  - ./mvnw clean verify jacoco:report coveralls:report
-
 jdk:
   - openjdk8
+
+cache:
+  directories:
+    - $HOME/.m2
 
 branches:
   only:
     - master
+    - /urlaubsverwaltung\-[0-9]+\.[0-9]+\.[0-9]$/
+
+install: true
+
+script:
+  - ./mvnw clean verify
+
+deploy:
+  provider: script
+  script: ./mvnw compile jib:build -Djib.to.auth.username="$REGISTRY_USERNAME" -Djib.to.auth.password="$REGISTRY_PASSWORD"
+  on:
+    tags: true
+
+env:
+  global:
+    - secure: "eu/K6H4y2pzsXSPWj13ajjDizNXruESPWw/IAYP/vW9v9pT84qFnUl3ipkZRj/jUy7m+54W/J5lAGnkjSDDvo8TSc27wCD8JvckNAk6ZCy8WjCCfVkmb1Gvf3S5swUUaBKZmLtTV4XSMY62WKyONL/VbTJ+t9MwClm5X8vwNDAd8APVOIj8aCddCwQbUtjXSVIXKRfr+bxVg0pdMaSTxKTKgaxJ++SS8v5RpSdjuuyNFebQgaAClHcVSNIOjO44ykl+/Dq1QOkciJ8D475W6oy+mH85wHe/w0zLn5RgPFjsVh1vjHJJeObFhE7EXRXYMILNx+n+PzS54WVCaZ2KoFX9SMb8miODreuQeRnDECsq1wwRP/NM5DUo4azItTJKC2RGHr0e+N3mMXePaYjbhsHJzBzGZkshUMZhDUu+I1K2jaTyLQT8X4fN7zwG3/shY7XNOlAAH+ZgwoHSDq+cm54mihMVrXmlyZuG4cEVMdf2c+jfPXOAcnAXaXBG4SuIsUifO/LQkL6qWlXjeZBTrMRs5viO2UE9BKBfqVU8uxd5lvccUxCBKqPNmRSCK6LWvzr+zu16gP/Tlw32/G59l/fVu6fyrKHbXD1Tv81oQIoj5O3JGaDEASL2XrVnDh0VoDhuKE/5euwSr5NzfWmWlY1zNg1Vo6kGQc2UyJ5htAas=" # REGISTRY_USERNAME
+    - secure: "BqcBKnxHn0y+wBtrCw4ebqgZpGv7KrPEF6COSW+s4J6c00ges6tENRFaQpZVuq6Ar+de2AcfLeTiU8Z6msJITIPxXP6z/N0/pRlF4SVA4CPe1A5ukRDNk7Rm3qlqI9e5yDn2tBDF+xr9R3yPCXuFf7f9Mv7AMtaxUZsDGDuzfcHL1RPXqux9w0wxhp4RnbcPioE4Dc1d4s02G8lwKHja66eHaAVoyAcgKUH3wUxHMFqjyXKB/+P5uTyXluQ81HDs+USgtJ8Zu2TKvr89xl9BMjAFnk3dj2XW9cMjepAti6nVTWWhMgPdmG6IDhhSQYhueRCvjilG5f0uystSwJqx0mDh+YHSY4Ael+VH1zOiTDrrmtGSALdfTCyjaDp+hS+O9AIYtAVgsp+wepWTXH2pIy9c39qLuMzembu9y5mOyRRL2083gfDQUIvwn54At3jBKhxqXDbTUplvvS9J1ZAgvvZLjoBH1IBzQ9x/1Ahw/yPQEEk1vUHez80Dic7oqhDmzZH/ekpVtBbkB+3aG9yNJaJY6lvFBifACpUreRINBlslwjful1g13OvFS/u9f7fKiJBOOjJo+0ZVYX3jpEH0TONIoF6Xqp8Lm6AvqaO5qNUi0qV3l1pM4Nx37x5ikWbyGzAh3Pxvceb0aQHwhqU5WfgKnXsYDgiRi6/jlcu+hFA=" # REGISTRY_PASSWORD
