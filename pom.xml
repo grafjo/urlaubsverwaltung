@@ -337,6 +337,52 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.1</version>
+                <executions>
+                    <execution>
+                        <id>unpack</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>io.fabric8</groupId>
+                                    <artifactId>run-java-sh</artifactId>
+                                    <version>1.2.2</version>
+                                    <includes>**/*.sh</includes>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.1.1</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/container-rootfs.xml</descriptor>
+                    </descriptors>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                    <basedir>${project.build.directory}</basedir>
+                    <attach>false</attach>
+                    <formats><format>dir</format></formats>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>1.0.0</version>
@@ -345,19 +391,33 @@
                         <image>openjdk:8-jre-alpine</image>
                     </from>
                     <to>
-                        <image>registry.hub.docker.com/synyx/urlaubsverwaltung</image>
-                        <tags>
-                            <tag>${project.version}</tag>
-                        </tags>
+                        <image>registry.hub.docker.com/synyx/urlaubsverwaltung:${project.version}</image>
                     </to>
                     <container>
                         <ports>
                             <port>8080</port>
                         </ports>
                         <environment>
+                            <JAVA_CLASSPATH>/app/resources:/app/classes</JAVA_CLASSPATH>
+                            <JAVA_LIB_DIR>/app/libs/</JAVA_LIB_DIR>
+                            <JAVA_MAIN_CLASS>org.synyx.urlaubsverwaltung.UrlaubsverwaltungApplication</JAVA_MAIN_CLASS>
                             <SPRING_PROFILES_ACTIVE>dev</SPRING_PROFILES_ACTIVE>
                         </environment>
+                        <entrypoint>sh</entrypoint>
+                        <args>
+                            <arg>-c</arg>
+                            <arg>/app/run-java.sh</arg>
+                        </args>
                     </container>
+                    <extraDirectory>
+                        <path>${project.build.directory}/${project.artifactId}-${project.version}-container-rootfs</path>
+                        <permissions>
+                            <permission>
+                                <file>/app/run-java.sh</file>
+                                <mode>555</mode>
+                            </permission>
+                        </permissions>
+                    </extraDirectory>
                 </configuration>
             </plugin>
 
