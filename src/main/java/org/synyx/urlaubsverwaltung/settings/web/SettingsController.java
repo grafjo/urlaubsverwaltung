@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.settings.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import org.synyx.urlaubsverwaltung.mail.MailService;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.settings.FederalState;
 import org.synyx.urlaubsverwaltung.settings.GoogleCalendarSettings;
+import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.calendarintegration.providers.CalendarProvider;
@@ -37,16 +39,19 @@ public class SettingsController {
     private final List<CalendarProvider> calendarProviders;
     private final MailService mailService;
     private final SettingsValidator settingsValidator;
+    private final boolean isMailServerFromApplicationProperties;
 
     @Autowired
     public SettingsController(SettingsService settingsService,
                               List<CalendarProvider> calendarProviders,
                               MailService mailService,
-                              SettingsValidator settingsValidator) {
+                              SettingsValidator settingsValidator,
+                              @Value("${spring.mail.host:unknown}") String mailServerFromApplicationProperties) {
         this.settingsService = settingsService;
         this.calendarProviders = calendarProviders;
         this.mailService = mailService;
         this.settingsValidator = settingsValidator;
+        this.isMailServerFromApplicationProperties = !mailServerFromApplicationProperties.equalsIgnoreCase("unknown");
     }
 
     @PreAuthorize(SecurityRules.IS_OFFICE)
@@ -78,6 +83,8 @@ public class SettingsController {
         model.addAttribute("settings", settings);
         model.addAttribute("federalStateTypes", FederalState.values());
         model.addAttribute("dayLengthTypes", DayLength.values());
+
+        model.addAttribute("isMailServerFromApplicationProperties", isMailServerFromApplicationProperties);
 
         List<String> providers = calendarProviders.stream()
             .map(provider -> provider.getClass().getSimpleName())
@@ -116,6 +123,10 @@ public class SettingsController {
             model.addAttribute(ControllerConstants.ERRORS_ATTRIBUTE, errors);
 
             return "settings/settings_form";
+        }
+
+        if(isMailServerFromApplicationProperties) {
+            settings.setMailSettings(new MailSettings());
         }
 
         settingsService.save(processGoogleRefreshToken(settings));

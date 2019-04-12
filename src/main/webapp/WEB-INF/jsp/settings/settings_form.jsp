@@ -83,10 +83,12 @@
                             <a href="#publicHolidays" aria-controls="publicHolidays" role="tab"
                                data-toggle="tab"><spring:message code="settings.tabs.workingTime"/></a>
                         </li>
-                        <li role="presentation" class="${MAIL_ERROR_CSS_CLASS}">
-                            <a href="#mail" aria-controls="mail" role="tab" data-toggle="tab"><spring:message
-                                code="settings.tabs.mail"/></a>
-                        </li>
+                        <c:if test="${not isMailServerFromApplicationProperties}">
+                            <li role="presentation" class="${MAIL_ERROR_CSS_CLASS}">
+                                <a href="#mail" aria-controls="mail" role="tab" data-toggle="tab"><spring:message
+                                    code="settings.tabs.mail"/></a>
+                            </li>
+                        </c:if>
                         <li role="presentation" class="${CALENDAR_ERROR_CSS_CLASS}">
                             <a href="#calendar" aria-controls="calendar" role="tab" data-toggle="tab"><spring:message
                                 code="settings.tabs.calendar"/></a>
@@ -366,7 +368,8 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane" id="mail">
+                    <c:if test="${not isMailServerFromApplicationProperties}">
+                        <div class="tab-pane" id="mail">
                         <div class="form-section">
                             <div class="col-xs-12">
                                 <legend><spring:message code="settings.mail.title"/></legend>
@@ -480,7 +483,7 @@
                             </div>
                         </div>
                     </div>
-
+                    </c:if>
                     <div class="tab-pane" id="calendar">
                         <div class="form-section">
                             <div class="col-xs-12">
