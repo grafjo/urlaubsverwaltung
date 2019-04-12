@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
@@ -41,7 +40,7 @@ public class MailServiceImplTest {
 
     private MessageSource messageSource;
     private MailBuilder mailBuilder;
-    private WebConfiguredMailSender mailSender;
+    private MailSender mailSender;
     private PersonService personService;
     private DepartmentService departmentService;
 
@@ -56,7 +55,7 @@ public class MailServiceImplTest {
 
         messageSource = mock(MessageSource.class);
         mailBuilder = mock(MailBuilder.class);
-        mailSender = mock(WebConfiguredMailSender.class);
+        mailSender = mock(MailSender.class);
         personService = mock(PersonService.class);
         departmentService = mock(DepartmentService.class);
 
@@ -74,6 +73,7 @@ public class MailServiceImplTest {
 
         settings = new Settings();
         settings.getMailSettings().setActive(true);
+        settings.getMailSettings().setFrom("sender@bar.test");
 
         when(settingsService.getSettings()).thenReturn(settings);
     }
@@ -106,7 +106,7 @@ public class MailServiceImplTest {
         mailService.sendCancellationRequest(application, null);
 
         verify(mailSender)
-            .sendEmail(eq(settings.getMailSettings()), recipientsArgumentCaptor.capture(), anyString(), anyString());
+            .sendEmail(eq(settings.getMailSettings().getFrom()), recipientsArgumentCaptor.capture(), anyString(), anyString());
 
         List value = recipientsArgumentCaptor.getValue();
         Assert.assertEquals("Wrong number of recipients", 2, value.size());
@@ -132,7 +132,7 @@ public class MailServiceImplTest {
         when(mailBuilder.buildMailBody(any(), any(), eq(Locale.GERMAN))).thenReturn("mail body");
         mailService.sendNewApplicationNotification(application, null);
 
-        verify(mailSender).sendEmail(any(MailSettings.class), any(), eq("Neuer Urlaubsantrag für " + application.getPerson().getNiceName()), anyString());
+        verify(mailSender).sendEmail(eq(settings.getMailSettings().getFrom()), any(), eq("Neuer Urlaubsantrag für " + application.getPerson().getNiceName()), anyString());
     }
 
     @Test

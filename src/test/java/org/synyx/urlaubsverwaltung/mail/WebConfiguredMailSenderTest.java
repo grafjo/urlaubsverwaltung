@@ -1,52 +1,43 @@
 package org.synyx.urlaubsverwaltung.mail;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Answers;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
+@RunWith(MockitoJUnitRunner.class)
 public class WebConfiguredMailSenderTest {
 
-    private WebConfiguredMailSender mailSender;
-
+    @Mock
     private JavaMailSenderImpl javaMailSender;
-    private Settings settings;
 
-    @Before
-    public void setUp() {
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private SettingsService settingsService;
 
-        javaMailSender = mock(JavaMailSenderImpl.class);
-
-        SettingsService settingsService = mock(SettingsService.class);
-        mailSender = new WebConfiguredMailSender(javaMailSender);
-
-        settings = new Settings();
-        settings.getMailSettings().setActive(true);
-
-        when(settingsService.getSettings()).thenReturn(settings);
-    }
-
+    @InjectMocks
+    private WebConfiguredMailSender mailSender;
 
     @Test
     public void ensureNoMailSentIfSendingMailsIsDeactivated() {
 
-        settings.getMailSettings().setActive(false);
+        when(settingsService.getSettings().getMailSettings().isActive()).thenReturn(false);
 
-        mailSender.sendEmail(settings.getMailSettings(), Collections.singletonList("foo@bar.de"), "subject", "text");
+        mailSender.sendEmail("from@bar.de", Collections.singletonList("foo@bar.de"), "subject", "text");
 
         verifyZeroInteractions(javaMailSender);
     }
@@ -55,28 +46,32 @@ public class WebConfiguredMailSenderTest {
     @Test
     public void ensureMailSenderAttributesAreUpdatedWhenSendingMails() {
 
-        MailSettings mailSettings = settings.getMailSettings();
+        when(settingsService.getSettings().getMailSettings().isActive()).thenReturn(true);
+        when(settingsService.getSettings().getMailSettings().getHost()).thenReturn("localhost");
+        when(settingsService.getSettings().getMailSettings().getPort()).thenReturn(25);
+        when(settingsService.getSettings().getMailSettings().getUsername()).thenReturn("username");
+        when(settingsService.getSettings().getMailSettings().getPassword()).thenReturn("password");
 
-        mailSender.sendEmail(mailSettings, Collections.singletonList("foo@bar.de"), "subject", "text");
+        mailSender.sendEmail("from@bar.de", Collections.singletonList("foo@bar.de"), "subject", "text");
 
-        verify(javaMailSender).setHost(mailSettings.getHost());
-        verify(javaMailSender).setPort(mailSettings.getPort());
-        verify(javaMailSender).setUsername(mailSettings.getUsername());
-        verify(javaMailSender).setPassword(mailSettings.getPassword());
+
+        verify(javaMailSender).setHost("localhost");
+        verify(javaMailSender).setPort(25);
+        verify(javaMailSender).setUsername("username");
+        verify(javaMailSender).setPassword("password");
     }
 
 
     @Test
     public void ensureMailIsSentCorrectly() {
 
-        MailSettings mailSettings = settings.getMailSettings();
-
         ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
 
         String subject = "subject";
         String body = "text";
 
-        mailSender.sendEmail(mailSettings, Arrays.asList("max@firma.test", "marlene@firma.test"), subject, body);
+        when(settingsService.getSettings().getMailSettings().isActive()).thenReturn(true);
+        mailSender.sendEmail("from@bar.de", Arrays.asList("max@firma.test", "marlene@firma.test"), subject, body);
 
         verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
 
@@ -92,9 +87,7 @@ public class WebConfiguredMailSenderTest {
     @Test
     public void ensureNoMailIsSentIfRecipientsListIsNull() {
 
-        MailSettings mailSettings = settings.getMailSettings();
-
-        mailSender.sendEmail(mailSettings, null, "subject", "text");
+        mailSender.sendEmail("from@bar.de", null, "subject", "text");
 
         verifyZeroInteractions(javaMailSender);
     }
@@ -103,9 +96,7 @@ public class WebConfiguredMailSenderTest {
     @Test
     public void ensureNoMailIsSentIfRecipientsListIsEmpty() {
 
-        MailSettings mailSettings = settings.getMailSettings();
-
-        mailSender.sendEmail(mailSettings, Collections.emptyList(), "subject", "text");
+        mailSender.sendEmail("from@bar.de", Collections.emptyList(), "subject", "text");
 
         verifyZeroInteractions(javaMailSender);
     }
