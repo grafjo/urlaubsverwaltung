@@ -4,7 +4,7 @@ package org.synyx.urlaubsverwaltung.mail;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.JavaMailSender;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 
 public class SpringBootConfiguredMailSenderTest {
 
-    private JavaMailSenderImpl javaMailSender = mock(JavaMailSenderImpl.class);
+    private JavaMailSender javaMailSender = mock(JavaMailSender.class);
     private SpringBootConfiguredMailSender sut = new SpringBootConfiguredMailSender(javaMailSender, "lala@lala.com");
 
     @Test

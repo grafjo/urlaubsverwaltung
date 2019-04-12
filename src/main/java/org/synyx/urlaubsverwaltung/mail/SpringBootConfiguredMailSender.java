@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -22,12 +22,11 @@ class SpringBootConfiguredMailSender implements MailSender {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
-    private final JavaMailSenderImpl javaMailSender;
+    private final JavaMailSender javaMailSender;
     private final String from;
 
     @Autowired
-    SpringBootConfiguredMailSender(JavaMailSenderImpl javaMailSender, @Value("${uv.mail.from}") String from) {
-
+    SpringBootConfiguredMailSender(JavaMailSender javaMailSender, @Value("${uv.mail.from}") String from) {
         this.javaMailSender = javaMailSender;
         this.from = from;
     }
