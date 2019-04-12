@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.mail;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
@@ -22,15 +23,17 @@ class SpringBootConfiguredMailSender implements MailSender {
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final JavaMailSenderImpl javaMailSender;
+    private final String from;
 
     @Autowired
-    SpringBootConfiguredMailSender(JavaMailSenderImpl javaMailSender) {
+    SpringBootConfiguredMailSender(JavaMailSenderImpl javaMailSender, @Value("${uv.mail.from}") String from) {
 
         this.javaMailSender = javaMailSender;
+        this.from = from;
     }
 
     @Override
-    public void sendEmail(String sender, List<String> recipients, String subject, String text) {
+    public void sendEmail(List<String> recipients, String subject, String text) {
 
         if(recipients == null || recipients.isEmpty()) {
             LOG.warn("Could not send email to empty recipients!");
@@ -38,7 +41,7 @@ class SpringBootConfiguredMailSender implements MailSender {
         }
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setFrom(sender);
+        mailMessage.setFrom(from);
         mailMessage.setTo(recipients.toArray(new String[0]));
         mailMessage.setSubject(subject);
         mailMessage.setText(text);

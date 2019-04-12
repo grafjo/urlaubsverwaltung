@@ -38,7 +38,7 @@ class WebConfiguredMailSender implements MailSender {
     }
 
     @Override
-    public void sendEmail(String sender, List<String> recipients, String subject, String text) {
+    public void sendEmail(List<String> recipients, String subject, String text) {
 
         if (recipients != null && !recipients.isEmpty()) {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
@@ -49,7 +49,7 @@ class WebConfiguredMailSender implements MailSender {
                 addressTo[i] = recipients.get(i);
             }
 
-            mailMessage.setFrom(sender);
+            mailMessage.setFrom(settingsService.getSettings().getMailSettings().getFrom());
             mailMessage.setTo(addressTo);
             mailMessage.setSubject(subject);
             mailMessage.setText(text);

@@ -105,8 +105,7 @@ public class MailServiceImplTest {
 
         mailService.sendCancellationRequest(application, null);
 
-        verify(mailSender)
-            .sendEmail(eq(settings.getMailSettings().getFrom()), recipientsArgumentCaptor.capture(), anyString(), anyString());
+        verify(mailSender).sendEmail(recipientsArgumentCaptor.capture(), anyString(), anyString());
 
         List value = recipientsArgumentCaptor.getValue();
         Assert.assertEquals("Wrong number of recipients", 2, value.size());
@@ -132,7 +131,7 @@ public class MailServiceImplTest {
         when(mailBuilder.buildMailBody(any(), any(), eq(Locale.GERMAN))).thenReturn("mail body");
         mailService.sendNewApplicationNotification(application, null);
 
-        verify(mailSender).sendEmail(eq(settings.getMailSettings().getFrom()), any(), eq("Neuer Urlaubsantrag für " + application.getPerson().getNiceName()), anyString());
+        verify(mailSender).sendEmail(any(), eq("Neuer Urlaubsantrag für " + application.getPerson().getNiceName()), anyString());
     }
 
     @Test
