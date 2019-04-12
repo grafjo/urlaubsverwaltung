@@ -41,13 +41,13 @@ class MailServiceImpl implements MailService {
 
     private final MessageSource messageSource;
     private final MailBuilder mailBuilder;
-    private final MailSender mailSender;
+    private final WebConfiguredMailSender mailSender;
     private final RecipientService recipientService;
     private final DepartmentService departmentService;
     private final SettingsService settingsService;
 
     @Autowired
-    MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, MailSender mailSender,
+    MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, WebConfiguredMailSender mailSender,
                     RecipientService recipientService, DepartmentService departmentService, SettingsService settingsService) {
 
         this.messageSource = messageSource;

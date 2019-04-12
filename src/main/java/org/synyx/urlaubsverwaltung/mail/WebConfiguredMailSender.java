@@ -20,14 +20,14 @@ import static org.slf4j.LoggerFactory.getLogger;
  * Sends mails using {@link JavaMailSenderImpl}.
  */
 @Service
-class MailSender {
+class WebConfiguredMailSender {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
     private final JavaMailSenderImpl mailSender;
 
     @Autowired
-    MailSender(@Qualifier("javaMailSender") JavaMailSenderImpl mailSender) {
+    WebConfiguredMailSender(@Qualifier("javaMailSender") JavaMailSenderImpl mailSender) {
 
         this.mailSender = mailSender;
     }

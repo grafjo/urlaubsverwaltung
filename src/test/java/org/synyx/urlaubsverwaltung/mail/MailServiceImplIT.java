@@ -105,7 +105,7 @@ public class MailServiceImplIT {
         MailBuilder mailBuilder = new MailBuilder(configuration);
 
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
-        MailSender mailSender = new MailSender(javaMailSender);
+        WebConfiguredMailSender mailSender = new WebConfiguredMailSender(javaMailSender);
 
         personService = mock(PersonService.class);
         departmentService = mock(DepartmentService.class);

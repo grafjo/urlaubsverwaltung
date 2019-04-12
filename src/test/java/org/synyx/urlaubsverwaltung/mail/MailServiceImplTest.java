@@ -41,7 +41,7 @@ public class MailServiceImplTest {
 
     private MessageSource messageSource;
     private MailBuilder mailBuilder;
-    private MailSender mailSender;
+    private WebConfiguredMailSender mailSender;
     private PersonService personService;
     private DepartmentService departmentService;
 
@@ -56,7 +56,7 @@ public class MailServiceImplTest {
 
         messageSource = mock(MessageSource.class);
         mailBuilder = mock(MailBuilder.class);
-        mailSender = mock(MailSender.class);
+        mailSender = mock(WebConfiguredMailSender.class);
         personService = mock(PersonService.class);
         departmentService = mock(DepartmentService.class);
 

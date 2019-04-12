@@ -19,9 +19,9 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
-public class MailSenderTest {
+public class WebConfiguredMailSenderTest {
 
-    private MailSender mailSender;
+    private WebConfiguredMailSender mailSender;
 
     private JavaMailSenderImpl javaMailSender;
     private Settings settings;
@@ -32,7 +32,7 @@ public class MailSenderTest {
         javaMailSender = mock(JavaMailSenderImpl.class);
 
         SettingsService settingsService = mock(SettingsService.class);
-        mailSender = new MailSender(javaMailSender);
+        mailSender = new WebConfiguredMailSender(javaMailSender);
 
         settings = new Settings();
         settings.getMailSettings().setActive(true);
