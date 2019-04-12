@@ -2,11 +2,9 @@ package org.synyx.urlaubsverwaltung.mail;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
@@ -20,8 +18,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Sends mails using {@link JavaMailSenderImpl}.
  */
-@Service
-class WebConfiguredMailSender implements MailSender {
+public class WebConfiguredMailSender implements MailSender {
 
     private static final Logger LOG = getLogger(lookup().lookupClass());
 
@@ -29,8 +26,8 @@ class WebConfiguredMailSender implements MailSender {
     private final SettingsService settingsService;
 
     @Autowired
-    WebConfiguredMailSender(@Qualifier("javaMailSender") JavaMailSenderImpl mailSender,
-                            SettingsService settingsService) {
+    public WebConfiguredMailSender(JavaMailSenderImpl mailSender,
+                                   SettingsService settingsService) {
 
         this.mailSender = mailSender;
         this.settingsService = settingsService;
