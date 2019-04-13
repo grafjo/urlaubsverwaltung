@@ -6,4 +6,4 @@ dein am ${application.applicationDate.format("dd.MM.yyyy")} gestellter Antrag wu
 Begründung: ${comment.text}
 
 </#if>
-Link zum Antrag: ${settings.baseLinkURL}web/application/${application.id?c}
+Link zum Antrag: ${applicationUrl}web/application/${application.id?c}

@@ -82,6 +82,11 @@ public class MailServiceImplIT {
         }
     }
 
+    private final String mailServerHost = "smtp.test";
+    private final int mailServerPort = 1025;
+    private final String adminMailaddress = "admin@firma.test";
+    private final String applicationUrl = "http://urlaubsverwaltung/";
+
     private MailServiceImpl mailService;
     private PersonService personService;
     private DepartmentService departmentService;
@@ -113,10 +118,14 @@ public class MailServiceImplIT {
 
         RecipientService recipientService = new RecipientService(personService, departmentService);
 
+        MailOptionProvider mailOptionProvider = mock(MailOptionProvider.class);
 
+        when(mailOptionProvider.getApplicationUrl()).thenReturn(applicationUrl);
+        when(mailOptionProvider.getMailServerHost()).thenReturn(mailServerHost);
+        when(mailOptionProvider.getMailServerPort()).thenReturn(mailServerPort);
+        when(mailOptionProvider.getAdministrator()).thenReturn(adminMailaddress);
 
-        mailService = new MailServiceImpl(MESSAGE_SOURCE, mailBuilder, mailSender, recipientService, departmentService,
-            settingsService);
+        mailService = new MailServiceImpl(MESSAGE_SOURCE, mailBuilder, mailSender, recipientService, departmentService, mailOptionProvider);
 
         person = TestDataCreator.createPerson("user", "Lieschen", "Müller", "lieschen@firma.test");
 
@@ -124,7 +133,6 @@ public class MailServiceImplIT {
 
         settings = new Settings();
         settings.getMailSettings().setActive(true);
-        settings.getMailSettings().setBaseLinkURL("http://urlaubsverwaltung/");
         when(settingsService.getSettings()).thenReturn(settings);
 
         // BOSS
@@ -647,7 +655,7 @@ public class MailServiceImplIT {
 
         mailService.sendCalendarSyncErrorNotification("Kalendername", absence, "Calendar sync failed");
 
-        List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
+        List<Message> inbox = Mailbox.get(adminMailaddress);
         assertTrue(inbox.size() > 0);
 
         Message msg = inbox.get(0);
@@ -667,7 +675,7 @@ public class MailServiceImplIT {
 
         mailService.sendCalendarDeleteErrorNotification("Kalendername", "ID-123456", "event delete failed");
 
-        List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
+        List<Message> inbox = Mailbox.get(adminMailaddress);
         assertTrue(inbox.size() > 0);
 
         Message msg = inbox.get(0);
@@ -692,7 +700,7 @@ public class MailServiceImplIT {
 
         mailService.sendCalendarUpdateErrorNotification("Kalendername", absence, "ID-123456", "event update failed");
 
-        List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
+        List<Message> inbox = Mailbox.get(adminMailaddress);
         assertTrue(inbox.size() > 0);
 
         Message msg = inbox.get(0);
@@ -712,7 +720,7 @@ public class MailServiceImplIT {
 
         mailService.sendSuccessfullyUpdatedSettingsNotification(settings);
 
-        List<Message> inbox = Mailbox.get(settings.getMailSettings().getAdministrator());
+        List<Message> inbox = Mailbox.get(adminMailaddress);
         assertTrue(inbox.size() > 0);
 
         Message msg = inbox.get(0);
@@ -721,8 +729,8 @@ public class MailServiceImplIT {
 
         String content = (String) msg.getContent();
         assertTrue(content.contains("Einstellungen"));
-        assertTrue(content.contains(settings.getMailSettings().getHost()));
-        assertTrue(content.contains(settings.getMailSettings().getPort().toString()));
+        assertTrue(content.contains(mailServerHost));
+        assertTrue(content.contains(String.valueOf(mailServerPort)));
     }
 
 

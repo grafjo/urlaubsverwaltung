@@ -16,7 +16,6 @@ import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.Arrays;
@@ -59,23 +58,16 @@ public class MailServiceImplTest {
         personService = mock(PersonService.class);
         departmentService = mock(DepartmentService.class);
 
-        SettingsService settingsService = mock(SettingsService.class);
-
         // TODO: Would be better to mock this service directly
         RecipientService recipientService = new RecipientService(personService, departmentService);
 
+        MailOptionProvider mailOptionProvider = mock(MailOptionProvider.class);
         mailService = new MailServiceImpl(messageSource, mailBuilder, mailSender, recipientService, departmentService,
-            settingsService);
+                mailOptionProvider);
 
         Person person = TestDataCreator.createPerson();
 
         application = createApplication(person);
-
-        settings = new Settings();
-        settings.getMailSettings().setActive(true);
-        settings.getMailSettings().setFrom("sender@bar.test");
-
-        when(settingsService.getSettings()).thenReturn(settings);
     }
 
 

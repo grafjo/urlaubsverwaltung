@@ -14,7 +14,6 @@ import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
-import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
 import java.time.LocalDate;
@@ -44,26 +43,26 @@ class MailServiceImpl implements MailService {
     private final MailSender mailSender;
     private final RecipientService recipientService;
     private final DepartmentService departmentService;
-    private final SettingsService settingsService;
+    private final MailOptionProvider mailOptionProvider;
+
 
     @Autowired
     MailServiceImpl(MessageSource messageSource, MailBuilder mailBuilder, MailSender mailSender,
-                    RecipientService recipientService, DepartmentService departmentService, SettingsService settingsService) {
+                    RecipientService recipientService, DepartmentService departmentService, MailOptionProvider mailOptionProvider) {
 
         this.messageSource = messageSource;
         this.mailBuilder = mailBuilder;
         this.mailSender = mailSender;
         this.recipientService = recipientService;
         this.departmentService = departmentService;
-        this.settingsService = settingsService;
+        this.mailOptionProvider = mailOptionProvider;
+
     }
 
     @Override
     public void sendNewApplicationNotification(Application application, ApplicationComment comment) {
 
-        MailSettings mailSettings = getMailSettings();
-
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application, ofNullable(comment));
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, ofNullable(comment));
         model.put("departmentVacations",
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
                 application.getStartDate(), application.getEndDate()));
@@ -74,7 +73,6 @@ class MailServiceImpl implements MailService {
         sendMailToEachRecipient(model, recipients, "new_applications", subject);
     }
 
-
     private String getTranslation(String key, Object... args) {
 
         return messageSource.getMessage(key, args, LOCALE);
@@ -84,8 +82,6 @@ class MailServiceImpl implements MailService {
     private void sendMailToEachRecipient(Map<String, Object> model, List<Person> recipients, String template,
         String subject) {
 
-        MailSettings mailSettings = getMailSettings();
-
         for (Person recipient : recipients) {
             model.put("recipient", recipient);
 
@@ -94,21 +90,13 @@ class MailServiceImpl implements MailService {
         }
     }
 
-
-    private MailSettings getMailSettings() {
-
-        return settingsService.getSettings().getMailSettings();
-    }
-
-
-    private Map<String, Object> createModelForApplicationStatusChangeMail(MailSettings mailSettings,
-        Application application, Optional<ApplicationComment> optionalComment) {
+    private Map<String, Object> createModelForApplicationStatusChangeMail(Application application, Optional<ApplicationComment> optionalComment) {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
         model.put("dayLength", getTranslation(application.getDayLength().name()));
-        model.put("settings", mailSettings);
+        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
 
         optionalComment.ifPresent(applicationComment -> model.put("comment", applicationComment));
 
@@ -119,9 +107,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendRemindBossNotification(Application application) {
 
-        MailSettings mailSettings = getMailSettings();
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-                Optional.empty());
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, Optional.empty());
 
         List<Person> recipients = recipientService.getRecipientsForAllowAndRemind(application);
         sendMailToEachRecipient(model, recipients, "remind", getTranslation("subject.application.remind"));
@@ -131,9 +117,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendTemporaryAllowedNotification(Application application, ApplicationComment comment) {
 
-        MailSettings mailSettings = getMailSettings();
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-            ofNullable(comment));
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, ofNullable(comment));
         model.put("departmentVacations",
             departmentService.getApplicationsForLeaveOfMembersInDepartmentsOfPerson(application.getPerson(),
                 application.getStartDate(), application.getEndDate()));
@@ -153,9 +137,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendAllowedNotification(Application application, ApplicationComment comment) {
 
-        MailSettings mailSettings = getMailSettings();
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-            ofNullable(comment));
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, ofNullable(comment));
 
         // Inform user that the application for leave has been allowed
         String textUser = mailBuilder.buildMailBody("allowed_user", model, LOCALE);
@@ -173,9 +155,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendRejectedNotification(Application application, ApplicationComment comment) {
 
-        MailSettings mailSettings = getMailSettings();
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-            ofNullable(comment));
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, ofNullable(comment));
         String text = mailBuilder.buildMailBody("rejected", model, LOCALE);
         mailSender.sendEmail(RecipientUtil.getMailAddresses(application.getPerson()), getTranslation("subject.application.rejected"), text);
     }
@@ -184,11 +164,9 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendReferApplicationNotification(Application application, Person recipient, Person sender) {
 
-        MailSettings mailSettings = getMailSettings();
-
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("settings", mailSettings);
+        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
         model.put("recipient", recipient);
         model.put("sender", sender);
 
@@ -200,9 +178,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendConfirmation(Application application, ApplicationComment comment) {
 
-        MailSettings mailSettings = getMailSettings();
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-            ofNullable(comment));
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, ofNullable(comment));
         String text = mailBuilder.buildMailBody("confirm", model, LOCALE);
         mailSender.sendEmail(RecipientUtil.getMailAddresses(application.getPerson()), getTranslation("subject.application.applied.user"), text);
     }
@@ -211,9 +187,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendAppliedForLeaveByOfficeNotification(Application application, ApplicationComment comment) {
 
-        MailSettings mailSettings = getMailSettings();
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-            ofNullable(comment));
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, ofNullable(comment));
         String text = mailBuilder.buildMailBody("new_application_by_office", model, LOCALE);
         mailSender.sendEmail(RecipientUtil.getMailAddresses(application.getPerson()), getTranslation("subject.application.appliedByOffice"), text);
     }
@@ -222,9 +196,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendCancelledByOfficeNotification(Application application, ApplicationComment comment) {
 
-        MailSettings mailSettings = getMailSettings();
-        Map<String, Object> model = createModelForApplicationStatusChangeMail(mailSettings, application,
-            ofNullable(comment));
+        Map<String, Object> model = createModelForApplicationStatusChangeMail(application, ofNullable(comment));
 
         String text = mailBuilder.buildMailBody("cancelled_by_office", model, LOCALE);
 
@@ -240,9 +212,7 @@ class MailServiceImpl implements MailService {
      */
     private void sendTechnicalNotification(final String subject, final String text) {
 
-        MailSettings mailSettings = settingsService.getSettings().getMailSettings();
-
-        mailSender.sendEmail(Collections.singletonList(mailSettings.getAdministrator()), subject, text);
+        mailSender.sendEmail(Collections.singletonList(mailOptionProvider.getAdministrator()), subject, text);
     }
 
 
@@ -311,8 +281,12 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendSuccessfullyUpdatedSettingsNotification(Settings settings) {
 
+        // TODO remove settings method object
+
         Map<String, Object> model = new HashMap<>();
-        model.put("settings", settings);
+        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
+        model.put("host", mailOptionProvider.getMailServerHost());
+        model.put("port", mailOptionProvider.getMailServerPort());
 
         String text = mailBuilder.buildMailBody("updated_settings", model, LOCALE);
         sendTechnicalNotification(getTranslation("subject.settings.updated"), text);
@@ -322,11 +296,9 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendSickNoteConvertedToVacationNotification(Application application) {
 
-        MailSettings mailSettings = getMailSettings();
-
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("settings", mailSettings);
+        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
 
         String text = mailBuilder.buildMailBody("sicknote_converted", model, LOCALE);
         mailSender.sendEmail(RecipientUtil.getMailAddresses(application.getPerson()), getTranslation("subject.sicknote.converted"), text);
@@ -367,7 +339,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("person", person);
         model.put("rawPassword", rawPassword);
-        model.put("applicationUrl", "");
+        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
 
         String text = mailBuilder.buildMailBody("user_creation", model, LOCALE);
 
@@ -378,12 +350,10 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendCancellationRequest(Application application, ApplicationComment createdComment) {
 
-        MailSettings mailSettings = getMailSettings();
-
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("comment", createdComment);
-        model.put("settings", mailSettings);
+        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
 
         String text = mailBuilder.buildMailBody("application_cancellation_request", model, LOCALE);
 
@@ -395,12 +365,10 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendOvertimeNotification(Overtime overtime, OvertimeComment overtimeComment) {
 
-        MailSettings mailSettings = getMailSettings();
-
         Map<String, Object> model = new HashMap<>();
         model.put("overtime", overtime);
         model.put("comment", overtimeComment);
-        model.put("settings", mailSettings);
+        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
 
         String textOffice = mailBuilder.buildMailBody("overtime_office", model, LOCALE);
 
@@ -437,7 +405,6 @@ class MailServiceImpl implements MailService {
                         Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
 
         for (Map.Entry<Person, List<Application>> entry : applicationsPerRecipient.entrySet()) {
-            MailSettings mailSettings = getMailSettings();
 
             List<Application> applications = entry.getValue();
             Person recipient = entry.getKey();
@@ -445,7 +412,7 @@ class MailServiceImpl implements MailService {
             Map<String, Object> model = new HashMap<>();
             model.put("applicationList", applications);
             model.put("recipient", recipient);
-            model.put("settings", mailSettings);
+            model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
 
             String msg = mailBuilder.buildMailBody("cron_remind", model, LOCALE);
 
