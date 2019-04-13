@@ -24,4 +24,9 @@ public class MailConfig {
         return new WebConfiguredMailSender(javaMailSender(), settingsService);
     }
 
+    @Bean
+    public MailOptionProvider webconfiguredMailOptionProvider(SettingsService settingsService) {
+        return new WebConfiguredMailOptionProvider(settingsService);
+    }
+
 }
