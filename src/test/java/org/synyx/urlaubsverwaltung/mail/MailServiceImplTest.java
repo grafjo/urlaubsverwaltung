@@ -15,7 +15,6 @@ import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
 import org.synyx.urlaubsverwaltung.person.PersonService;
-import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.testdatacreator.TestDataCreator;
 
 import java.util.Arrays;
@@ -44,7 +43,6 @@ public class MailServiceImplTest {
     private DepartmentService departmentService;
 
     private Application application;
-    private Settings settings;
 
     @Captor
     private ArgumentCaptor<List<String>> recipientsArgumentCaptor;
@@ -62,6 +60,7 @@ public class MailServiceImplTest {
         RecipientService recipientService = new RecipientService(personService, departmentService);
 
         MailOptionProvider mailOptionProvider = mock(MailOptionProvider.class);
+        when(mailOptionProvider.getSender()).thenReturn("sender@bar.test");
         mailService = new MailServiceImpl(messageSource, mailBuilder, mailSender, recipientService, departmentService,
                 mailOptionProvider);
 
@@ -97,7 +96,7 @@ public class MailServiceImplTest {
 
         mailService.sendCancellationRequest(application, null);
 
-        verify(mailSender).sendEmail(recipientsArgumentCaptor.capture(), anyString(), anyString());
+        verify(mailSender).sendEmail(eq("sender@bar.test"), recipientsArgumentCaptor.capture(), anyString(), anyString());
 
         List value = recipientsArgumentCaptor.getValue();
         Assert.assertEquals("Wrong number of recipients", 2, value.size());
@@ -123,7 +122,7 @@ public class MailServiceImplTest {
         when(mailBuilder.buildMailBody(any(), any(), eq(Locale.GERMAN))).thenReturn("mail body");
         mailService.sendNewApplicationNotification(application, null);
 
-        verify(mailSender).sendEmail(any(), eq("Neuer Urlaubsantrag für " + application.getPerson().getNiceName()), anyString());
+        verify(mailSender).sendEmail(eq("sender@bar.test"), any(), eq("Neuer Urlaubsantrag für " + application.getPerson().getNiceName()), anyString());
     }
 
     @Test

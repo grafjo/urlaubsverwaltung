@@ -37,7 +37,7 @@ public class WebConfiguredMailSenderTest {
 
         when(settingsService.getSettings().getMailSettings().isActive()).thenReturn(false);
 
-        mailSender.sendEmail(Collections.singletonList("foo@bar.de"), "subject", "text");
+        mailSender.sendEmail("sender@bar.de", Collections.singletonList("foo@bar.de"), "subject", "text");
 
         verifyZeroInteractions(javaMailSender);
     }
@@ -52,7 +52,7 @@ public class WebConfiguredMailSenderTest {
         when(settingsService.getSettings().getMailSettings().getUsername()).thenReturn("username");
         when(settingsService.getSettings().getMailSettings().getPassword()).thenReturn("password");
 
-        mailSender.sendEmail(Collections.singletonList("foo@bar.de"), "subject", "text");
+        mailSender.sendEmail("sender@bar.de", Collections.singletonList("foo@bar.de"), "subject", "text");
 
 
         verify(javaMailSender).setHost("localhost");
@@ -71,7 +71,7 @@ public class WebConfiguredMailSenderTest {
         String body = "text";
 
         when(settingsService.getSettings().getMailSettings().isActive()).thenReturn(true);
-        mailSender.sendEmail(Arrays.asList("max@firma.test", "marlene@firma.test"), subject, body);
+        mailSender.sendEmail("sender@bar.de", Arrays.asList("max@firma.test", "marlene@firma.test"), subject, body);
 
         verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
 
@@ -87,7 +87,7 @@ public class WebConfiguredMailSenderTest {
     @Test
     public void ensureNoMailIsSentIfRecipientsListIsNull() {
 
-        mailSender.sendEmail(null, "subject", "text");
+        mailSender.sendEmail("sender@bar.de", null, "subject", "text");
 
         verifyZeroInteractions(javaMailSender);
     }
@@ -96,7 +96,7 @@ public class WebConfiguredMailSenderTest {
     @Test
     public void ensureNoMailIsSentIfRecipientsListIsEmpty() {
 
-        mailSender.sendEmail(Collections.emptyList(), "subject", "text");
+        mailSender.sendEmail("sender@bar.de", Collections.emptyList(), "subject", "text");
 
         verifyZeroInteractions(javaMailSender);
     }

@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verifyZeroInteractions;
 public class SpringBootConfiguredMailSenderTest {
 
     private JavaMailSender javaMailSender = mock(JavaMailSender.class);
-    private SpringBootConfiguredMailSender sut = new SpringBootConfiguredMailSender(javaMailSender, "lala@lala.com");
+    private SpringBootConfiguredMailSender sut = new SpringBootConfiguredMailSender(javaMailSender);
 
     @Test
     public void sendEmail() {
@@ -29,7 +29,7 @@ public class SpringBootConfiguredMailSenderTest {
 
         ArgumentCaptor<SimpleMailMessage> mailMessageArgumentCaptor = ArgumentCaptor.forClass(SimpleMailMessage.class);
 
-        sut.sendEmail(Arrays.asList(recipients), subject, body);
+        sut.sendEmail("lala@lala.com", Arrays.asList(recipients), subject, body);
 
         verify(javaMailSender).send(mailMessageArgumentCaptor.capture());
 
@@ -44,7 +44,7 @@ public class SpringBootConfiguredMailSenderTest {
     @Test
     public void doesntSendMailForZeroRecipients() {
 
-        sut.sendEmail(Collections.emptyList(), "subject", "text");
+        sut.sendEmail("lala@lala.com", Collections.emptyList(), "subject", "text");
 
         verifyZeroInteractions(javaMailSender);
     }

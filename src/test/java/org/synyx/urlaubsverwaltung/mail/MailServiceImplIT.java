@@ -85,6 +85,7 @@ public class MailServiceImplIT {
     private final String mailServerHost = "smtp.test";
     private final int mailServerPort = 1025;
     private final String adminMailaddress = "admin@firma.test";
+    private final String senderMailaddress = "sender@firma.test";
     private final String applicationUrl = "http://urlaubsverwaltung/";
 
     private MailServiceImpl mailService;
@@ -124,6 +125,7 @@ public class MailServiceImplIT {
         when(mailOptionProvider.getMailServerHost()).thenReturn(mailServerHost);
         when(mailOptionProvider.getMailServerPort()).thenReturn(mailServerPort);
         when(mailOptionProvider.getAdministrator()).thenReturn(adminMailaddress);
+        when(mailOptionProvider.getSender()).thenReturn(senderMailaddress);
 
         mailService = new MailServiceImpl(MESSAGE_SOURCE, mailBuilder, mailSender, recipientService, departmentService, mailOptionProvider);
 
@@ -577,7 +579,7 @@ public class MailServiceImplIT {
         Address[] from = msg.getFrom();
         Assert.assertNotNull("From must be set", from);
         Assert.assertEquals("From must be only one email address", 1, from.length);
-        Assert.assertEquals("Wrong from", settings.getMailSettings().getFrom(), from[0].toString());
+        Assert.assertEquals("Wrong from", senderMailaddress, from[0].toString());
     }
 
 
