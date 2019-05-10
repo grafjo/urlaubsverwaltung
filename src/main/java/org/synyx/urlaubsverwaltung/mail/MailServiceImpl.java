@@ -287,7 +287,7 @@ class MailServiceImpl implements MailService {
     @Override
     public void sendSuccessfullyUpdatedSettingsNotification(Settings settings) {
 
-        // TODO remove settings method object
+        // TODO remove settings method object - hier überlegen warum ... nicht mehr ganz klar
 
         Map<String, Object> model = new HashMap<>();
         model.put(MODEL_APPLICATION_URL, mailOptionProvider.getApplicationUrl());
