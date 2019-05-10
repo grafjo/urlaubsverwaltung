@@ -37,6 +37,7 @@ import static java.util.Optional.ofNullable;
 class MailServiceImpl implements MailService {
 
     private static final Locale LOCALE = Locale.GERMAN;
+    private static final String MODEL_APPLICATION_URL = "applicationUrl";
 
     private final MessageSource messageSource;
     private final MailBuilder mailBuilder;
@@ -96,7 +97,7 @@ class MailServiceImpl implements MailService {
         model.put("application", application);
         model.put("vacationType", getTranslation(application.getVacationType().getCategory().getMessageKey()));
         model.put("dayLength", getTranslation(application.getDayLength().name()));
-        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
+        model.put(MODEL_APPLICATION_URL, mailOptionProvider.getApplicationUrl());
 
         optionalComment.ifPresent(applicationComment -> model.put("comment", applicationComment));
 
@@ -167,7 +168,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
+        model.put(MODEL_APPLICATION_URL, mailOptionProvider.getApplicationUrl());
         model.put("recipient", recipient);
         model.put("sender", sender);
 
@@ -290,7 +291,7 @@ class MailServiceImpl implements MailService {
         // TODO remove settings method object
 
         Map<String, Object> model = new HashMap<>();
-        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
+        model.put(MODEL_APPLICATION_URL, mailOptionProvider.getApplicationUrl());
         model.put("host", mailOptionProvider.getMailServerHost());
         model.put("port", mailOptionProvider.getMailServerPort());
 
@@ -304,7 +305,7 @@ class MailServiceImpl implements MailService {
 
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
-        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
+        model.put(MODEL_APPLICATION_URL, mailOptionProvider.getApplicationUrl());
 
         String text = mailBuilder.buildMailBody("sicknote_converted", model, LOCALE);
         mailSender.sendEmail(mailOptionProvider.getSender(), RecipientUtil.getMailAddresses(application.getPerson()), getTranslation("subject.sicknote.converted"), text);
@@ -345,7 +346,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("person", person);
         model.put("rawPassword", rawPassword);
-        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
+        model.put(MODEL_APPLICATION_URL, mailOptionProvider.getApplicationUrl());
 
         String text = mailBuilder.buildMailBody("user_creation", model, LOCALE);
 
@@ -359,7 +360,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("application", application);
         model.put("comment", createdComment);
-        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
+        model.put(MODEL_APPLICATION_URL, mailOptionProvider.getApplicationUrl());
 
         String text = mailBuilder.buildMailBody("application_cancellation_request", model, LOCALE);
 
@@ -374,7 +375,7 @@ class MailServiceImpl implements MailService {
         Map<String, Object> model = new HashMap<>();
         model.put("overtime", overtime);
         model.put("comment", overtimeComment);
-        model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
+        model.put(MODEL_APPLICATION_URL, mailOptionProvider.getApplicationUrl());
 
         String textOffice = mailBuilder.buildMailBody("overtime_office", model, LOCALE);
         List<String> recipients = RecipientUtil.getMailAddresses(recipientService.getRecipientsWithNotificationType(MailNotification.OVERTIME_NOTIFICATION_OFFICE));
@@ -415,7 +416,7 @@ class MailServiceImpl implements MailService {
             Map<String, Object> model = new HashMap<>();
             model.put("applicationList", applications);
             model.put("recipient", recipient);
-            model.put("applicationUrl", mailOptionProvider.getApplicationUrl());
+            model.put(MODEL_APPLICATION_URL, mailOptionProvider.getApplicationUrl());
 
             String msg = mailBuilder.buildMailBody("cron_remind", model, LOCALE);
             List<String> recipients = RecipientUtil.getMailAddresses(recipient);
