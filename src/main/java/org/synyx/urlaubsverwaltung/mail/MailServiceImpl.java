@@ -12,7 +12,6 @@ import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.overtime.OvertimeComment;
 import org.synyx.urlaubsverwaltung.person.MailNotification;
 import org.synyx.urlaubsverwaltung.person.Person;
-import org.synyx.urlaubsverwaltung.settings.MailSettings;
 import org.synyx.urlaubsverwaltung.settings.Settings;
 import org.synyx.urlaubsverwaltung.sicknote.SickNote;
 
