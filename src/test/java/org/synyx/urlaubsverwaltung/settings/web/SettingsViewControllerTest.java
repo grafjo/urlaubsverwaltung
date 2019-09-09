@@ -71,7 +71,7 @@ public class SettingsViewControllerTest {
     @Before
     public void setUp() {
 
-        sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, mailService, settingsValidator);
+        sut = new SettingsViewController(settingsService, CALENDAR_PROVIDER_LIST, mailService, settingsValidator, "unknown");
     }
 
     @Test
