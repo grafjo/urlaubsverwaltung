@@ -1,28 +1,20 @@
 package org.synyx.urlaubsverwaltung.api;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
-import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
-
 @Configuration
-@Order(1)
-public class RestApiSecurityConfig extends WebSecurityConfigurerAdapter {
+@ConditionalOnProperty(value = "uv.security.auth", havingValue = "oidc")
+@Order(2)
+public class Oauth2RestApiSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http
-            .antMatcher("/api/**")
-            .sessionManagement()
-            .sessionCreationPolicy(NEVER)
-            .and()
-            .authorizeRequests()
-            .antMatchers("/api/**").authenticated()
-            .anyRequest().authenticated();
-
+        http.oauth2Login();
     }
 
 }
