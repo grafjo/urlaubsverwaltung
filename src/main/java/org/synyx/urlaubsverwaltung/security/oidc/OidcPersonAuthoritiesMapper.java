@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.security.oidc;
 
 import org.slf4j.Logger;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +15,8 @@ import org.synyx.urlaubsverwaltung.person.Role;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static java.util.Optional.ofNullable;
@@ -35,13 +38,16 @@ public class OidcPersonAuthoritiesMapper implements GrantedAuthoritiesMapper {
 
     @Override
     public Collection<? extends GrantedAuthority> mapAuthorities(Collection<? extends GrantedAuthority> authorities) {
-        return authorities
-            .stream()
-            .filter(OidcUserAuthority.class::isInstance)
-            .findFirst()
-            .map(OidcUserAuthority.class::cast)
-            .map(this::mapAuthorities)
-            .orElseThrow(() -> new OidcPersonMappingException("oidc: The granted authority was not a 'OidcUserAuthority' and the user cannot be mapped."));
+
+        Collection<? extends GrantedAuthority> grantedAuthorities = authorities
+                .stream()
+                .filter(OidcUserAuthority.class::isInstance)
+                .findFirst()
+                .map(OidcUserAuthority.class::cast)
+                .map(this::mapAuthorities)
+                .orElseThrow(() -> new OidcPersonMappingException("oidc: The granted authority was not a 'OidcUserAuthority' and the user cannot be mapped."));
+
+        return Stream.concat(grantedAuthorities.stream(), authorities.stream()).collect(Collectors.toList());
     }
 
     private Collection<? extends GrantedAuthority> mapAuthorities(OidcUserAuthority oidcUserAuthority) {
