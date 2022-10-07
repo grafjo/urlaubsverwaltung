@@ -9,9 +9,11 @@ import java.util.Collection;
 
 public class GroupClaimRoleAccessDecisionVoter implements AccessDecisionVoter<Object> {
 
-    // TODO make this constants configurable from application.properties
-    private static final String REQUIRED_GROUP = "urlaubsverwaltung-user";
+    private final String permittedGroupName;
 
+    public GroupClaimRoleAccessDecisionVoter(String permittedGroupName) {
+        this.permittedGroupName = permittedGroupName;
+    }
 
     @Override
     public boolean supports(ConfigAttribute attribute) {
@@ -37,7 +39,7 @@ public class GroupClaimRoleAccessDecisionVoter implements AccessDecisionVoter<Ob
                 result = ACCESS_DENIED;
 
                 for (GrantedAuthority authority : authentication.getAuthorities()) {
-                    if (REQUIRED_GROUP.equals(authority.getAuthority())) {
+                    if (permittedGroupName.equals(authority.getAuthority())) {
                         return ACCESS_GRANTED;
                     }
                 }

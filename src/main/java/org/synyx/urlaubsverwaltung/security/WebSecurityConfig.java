@@ -19,6 +19,7 @@ import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.synyx.urlaubsverwaltung.person.PersonService;
 import org.synyx.urlaubsverwaltung.security.oidc.GroupClaimRoleAccessDecisionVoter;
+import org.synyx.urlaubsverwaltung.security.oidc.OidcSecurityProperties;
 
 import java.util.List;
 
@@ -37,13 +38,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final PersonService personService;
     private final SessionService sessionService;
     private final boolean isOauth2Enabled;
+    private final OidcSecurityProperties oidcSecurityProperties;
 
     private OidcClientInitiatedLogoutSuccessHandler oidcClientInitiatedLogoutSuccessHandler;
 
-    public WebSecurityConfig(SecurityConfigurationProperties properties, PersonService personService, SessionService sessionService) {
+    public WebSecurityConfig(SecurityConfigurationProperties properties, OidcSecurityProperties oidcSecurityProperties, PersonService personService, SessionService sessionService) {
         isOauth2Enabled = "oidc".equalsIgnoreCase(properties.getAuth().name());
         this.personService = personService;
         this.sessionService = sessionService;
+        this.oidcSecurityProperties = oidcSecurityProperties;
     }
 
     @Override
@@ -79,12 +82,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest()
             .authenticated();
 
-        //.accessDecisionManager(accessDecisionManager());
-
         if (isOauth2Enabled) {
 
-            authenticated.accessDecisionManager(accessDecisionManager());
-
+            if (oidcSecurityProperties.getGroupClaim().isEnabled()) {
+                authenticated.accessDecisionManager(accessDecisionManager(oidcSecurityProperties));
+            }
 
             http.oauth2Login().and()
                 .logout()
@@ -104,8 +106,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService), BasicAuthenticationFilter.class);
     }
 
-    private static AccessDecisionManager accessDecisionManager() {
-        return new UnanimousBased(List.of(new WebExpressionVoter(), new RoleVoter(), new AuthenticatedVoter(), new GroupClaimRoleAccessDecisionVoter()));
+    private static AccessDecisionManager accessDecisionManager(OidcSecurityProperties oidcSecurityProperties) {
+        return new UnanimousBased(List.of(new WebExpressionVoter(), new RoleVoter(), new AuthenticatedVoter(), new GroupClaimRoleAccessDecisionVoter(oidcSecurityProperties.getGroupClaim().getPermittedGroup())));
     }
 
     @Autowired(required = false)
