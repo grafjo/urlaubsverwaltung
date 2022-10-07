@@ -5,13 +5,22 @@ import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointR
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.metrics.export.prometheus.PrometheusScrapeEndpoint;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.vote.AuthenticatedVoter;
+import org.springframework.security.access.vote.RoleVoter;
+import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.synyx.urlaubsverwaltung.person.PersonService;
+import org.synyx.urlaubsverwaltung.security.oidc.GroupClaimRoleAccessDecisionVoter;
+
+import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
 
@@ -40,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http
+        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry authenticated = http
             .authorizeRequests()
             .antMatchers("/favicons/**").permitAll()
             .antMatchers("/browserconfig.xml").permitAll()
@@ -70,7 +79,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest()
             .authenticated();
 
+        //.accessDecisionManager(accessDecisionManager());
+
         if (isOauth2Enabled) {
+
+            authenticated.accessDecisionManager(accessDecisionManager());
+
+
             http.oauth2Login().and()
                 .logout()
                 .logoutSuccessHandler(oidcClientInitiatedLogoutSuccessHandler);
@@ -87,6 +102,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
             .addFilterAfter(new ReloadAuthenticationAuthoritiesFilter(personService, sessionService), BasicAuthenticationFilter.class);
+    }
+
+    private static AccessDecisionManager accessDecisionManager() {
+        return new UnanimousBased(List.of(new WebExpressionVoter(), new RoleVoter(), new AuthenticatedVoter(), new GroupClaimRoleAccessDecisionVoter()));
     }
 
     @Autowired(required = false)
