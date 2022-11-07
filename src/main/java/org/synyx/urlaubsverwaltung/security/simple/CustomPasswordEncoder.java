@@ -17,12 +17,12 @@ public class CustomPasswordEncoder implements PasswordEncoder {
     CustomPasswordEncoder() {
 
         final String idForEncode = "pbkdf2";
-        final Pbkdf2PasswordEncoder defaultEncoder = new Pbkdf2PasswordEncoder();
+        final Pbkdf2PasswordEncoder defaultEncoder = Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8();
 
         Map<String, PasswordEncoder> encoders = new HashMap<>();
         encoders.put(idForEncode, defaultEncoder);
         encoders.put("bcrypt", new BCryptPasswordEncoder());
-        encoders.put("scrypt", new SCryptPasswordEncoder());
+        encoders.put("scrypt", SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8());
         final DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(idForEncode, encoders);
         delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new StandardPasswordEncoder());
         passwordEncoder = delegatingPasswordEncoder;

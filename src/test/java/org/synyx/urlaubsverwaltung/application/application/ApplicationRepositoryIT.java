@@ -428,7 +428,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
         // Let's calculate! --------------------------------------------------------------------------------------------
 
         BigDecimal totalHours = sut.calculateTotalOvertimeReductionOfPerson(person);
-        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(26.5));
+        assertThat(totalHours).isEqualTo(new BigDecimal("26.50"));
     }
 
     @Test
@@ -494,7 +494,7 @@ class ApplicationRepositoryIT extends TestContainersBase {
 
         // Let's calculate! --------------------------------------------------------------------------------------------
         final BigDecimal totalHours = sut.calculateTotalOvertimeReductionOfPersonBefore(person, LocalDate.of(2022, 1, 1));
-        assertThat(totalHours).isEqualTo(BigDecimal.valueOf(26.5));
+        assertThat(totalHours).isEqualTo(new BigDecimal("26.50"));
     }
 
     @Test

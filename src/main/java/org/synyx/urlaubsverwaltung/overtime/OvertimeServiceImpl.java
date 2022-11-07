@@ -12,7 +12,7 @@ import org.synyx.urlaubsverwaltung.settings.SettingsService;
 import org.synyx.urlaubsverwaltung.util.DateUtil;
 import org.synyx.urlaubsverwaltung.util.DecimalConverter;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.time.Clock;
 import java.time.Duration;
 import java.time.LocalDate;

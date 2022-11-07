@@ -14,7 +14,7 @@ enum DemoUser {
     OFFICE("office", Role.USER, Role.OFFICE),
     ADMIN("admin", Role.USER, Role.ADMIN);
 
-    public static final String SECRET = "{pbkdf2}7fa3ad492f74237b2fae54a07d81df1b17e5b3790fa629eb1b3fea19f86d4fccb62cf12bcfbd5913";
+    public static final String SECRET = "{pbkdf2}85f215332f5d438890620f7a8e3ce5fa0f44e7e58cf504ffbc790c9fdc0e5347c2fb8d56592c80386b5d3d050fb9ffa6";
 
     private final String username;
     private final Role[] roles;

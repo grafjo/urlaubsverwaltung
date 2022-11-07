@@ -3,12 +3,12 @@ package org.synyx.urlaubsverwaltung.sicknote.comment;
 import org.synyx.urlaubsverwaltung.comment.AbstractComment;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToOne;
 import java.time.Clock;
 
-import static javax.persistence.EnumType.STRING;
+import static jakarta.persistence.EnumType.STRING;
 
 /**
  * Comment to a sick note containing detailed information like date of comment or commenting person.
