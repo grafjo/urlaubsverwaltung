@@ -2,7 +2,7 @@
 kudos
 * https://github.com/tailwindlabs/heroicons
 ---------------------------------------------->
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 
 <%@attribute name="className" type="java.lang.String" required="false" %>
 <svg class="${className}" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

@@ -3,7 +3,7 @@ kudos
 * https://github.com/tailwindlabs/heroicons
 ---------------------------------------------->
 
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 
 <%@attribute name="className" type="java.lang.String" required="false" %>
 

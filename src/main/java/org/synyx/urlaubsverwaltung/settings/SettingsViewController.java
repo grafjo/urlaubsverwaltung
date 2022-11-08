@@ -19,7 +19,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeUpdate;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.workingtime.FederalState;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.time.DayOfWeek;
 import java.util.List;
 import java.util.TimeZone;

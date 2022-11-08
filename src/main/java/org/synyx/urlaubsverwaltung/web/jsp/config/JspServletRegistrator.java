@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.xml.sax.InputSource;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.BiConsumer;

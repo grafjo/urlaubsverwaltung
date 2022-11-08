@@ -4,8 +4,8 @@ import org.springframework.web.servlet.tags.RequestContextAwareTag;
 import org.springframework.web.servlet.tags.UrlTag;
 import org.synyx.urlaubsverwaltung.web.thymeleaf.AssetFilenameHashMapper;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.PageContext;
 
 public class AssetsHashResolverTag extends RequestContextAwareTag {
 
