@@ -25,6 +25,8 @@ class WorkingTimeEntity {
     @GeneratedValue
     private Integer id;
 
+    // TODO use PersonEntity
+
     @OneToOne
     private Person person;
 

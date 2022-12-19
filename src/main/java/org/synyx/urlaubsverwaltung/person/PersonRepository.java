@@ -11,32 +11,32 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Repository for {@link Person} entities.
+ * Repository for {@link PersonEntity} entities.
  */
-interface PersonRepository extends JpaRepository<Person, Integer> {
+interface PersonRepository extends JpaRepository<PersonEntity, Integer> {
 
     @Modifying
     void deleteById(Integer id);
 
-    Optional<Person> findByUsername(String username);
+    Optional<PersonEntity> findByUsername(String username);
 
-    Optional<Person> findByEmail(String email);
+    Optional<PersonEntity> findByEmail(String email);
 
     int countByPermissionsNotContaining(Role permission);
 
     int countByPermissionsContainingAndIdNotIn(Role permission, List<Integer> id);
 
-    List<Person> findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permission);
+    List<PersonEntity> findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permission);
 
-    @Query("select p from Person p where :permission not member of p.permissions and (p.firstName like %:query% or p.lastName like %:query%)")
-    Page<Person> findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(@Param("permission") Role role, @Param("query") String query, Pageable pageable);
+    @Query("select p from person p where :permission not member of p.permissions and (p.firstName like %:query% or p.lastName like %:query%)")
+    Page<PersonEntity> findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(@Param("permission") Role role, @Param("query") String query, Pageable pageable);
 
-    List<Person> findByPermissionsContainingOrderByFirstNameAscLastNameAsc(Role permission);
+    List<PersonEntity> findByPermissionsContainingOrderByFirstNameAscLastNameAsc(Role permission);
 
-    @Query("select p from Person p where :permission member of p.permissions and (p.firstName like %:query% or p.lastName like %:query%)")
-    Page<Person> findByPermissionsContainingAndNiceNameContainingIgnoreCase(@Param("permission") Role permission, @Param("query") String nameQuery, Pageable pageable);
+    @Query("select p from person p where :permission member of p.permissions and (p.firstName like %:query% or p.lastName like %:query%)")
+    Page<PersonEntity> findByPermissionsContainingAndNiceNameContainingIgnoreCase(@Param("permission") Role permission, @Param("query") String nameQuery, Pageable pageable);
 
-    List<Person> findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permissionContaining, Role permissionNotContaining);
+    List<PersonEntity> findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(Role permissionContaining, Role permissionNotContaining);
 
-    List<Person> findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(Role permissionNotContaining, MailNotification mailNotification);
+    List<PersonEntity> findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(Role permissionNotContaining, MailNotification mailNotification);
 }

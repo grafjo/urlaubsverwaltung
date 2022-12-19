@@ -22,6 +22,7 @@ import static java.time.temporal.TemporalAdjusters.lastDayOfYear;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.synyx.urlaubsverwaltung.person.PersonMapper.toPersonEntity;
 
 @ExtendWith(MockitoExtension.class)
 class AccountServiceImplTest {
@@ -44,6 +45,7 @@ class AccountServiceImplTest {
         when(settingsService.getSettings()).thenReturn(new Settings());
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        person.setId(1);
 
         final int year = 2012;
         final LocalDate from = Year.of(year).atDay(1);
@@ -54,7 +56,7 @@ class AccountServiceImplTest {
         final BigDecimal remainingVacationDaysNotExpiring = ZERO;
         final boolean doRemainingVacationDaysExpire = true;
         final String comment = "comment";
-        final AccountEntity accountEntity = new AccountEntity(person, from, to, doRemainingVacationDaysExpire, expiryDate,
+        final AccountEntity accountEntity = new AccountEntity(toPersonEntity(person), from, to, doRemainingVacationDaysExpire, expiryDate,
             annualVacationDays, remainingVacationDays, remainingVacationDaysNotExpiring, comment);
 
         final int id = 1;
@@ -119,11 +121,11 @@ class AccountServiceImplTest {
         final LocalDate to = LocalDate.of(year, 1, 1).with(lastDayOfYear());
         final LocalDate expiryDate = LocalDate.of(year, Month.APRIL, 1);
 
-        final AccountEntity accountEntity1 = new AccountEntity(person, from, to, null, expiryDate,
+        final AccountEntity accountEntity1 = new AccountEntity(toPersonEntity(person), from, to, null, expiryDate,
             new BigDecimal(30), new BigDecimal(3), ZERO, "awesome comment");
         accountEntity1.setId(1);
 
-        final AccountEntity accountEntity2 = new AccountEntity(person2, from, to, true, expiryDate,
+        final AccountEntity accountEntity2 = new AccountEntity(toPersonEntity(person2), from, to, true, expiryDate,
             new BigDecimal(30), new BigDecimal(3), ZERO, "awesome comment nummero dueee");
         accountEntity2.setId(2);
 

@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.account;
 
 import org.junit.jupiter.api.Test;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonEntity;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,19 +19,19 @@ class AccountEntityTest {
 
     @Test
     void toStringTest() {
-        final Person person = new Person("Theo", "Theo", "Theo", "Theo");
-        person.setId(10);
-        person.setPassword("Theo");
-        person.setPermissions(List.of(USER));
-        person.setNotifications(List.of(NOTIFICATION_USER));
+        final PersonEntity personEntity = new PersonEntity("Theo", "Theo", "Theo", "Theo");
+        personEntity.setId(10);
+        personEntity.setPassword("Theo");
+        personEntity.setPermissions(List.of(USER));
+        personEntity.setNotifications(List.of(NOTIFICATION_USER));
 
         final LocalDate validFrom = LocalDate.of(2014, JANUARY, 1);
         final LocalDate validTo = LocalDate.of(2014, DECEMBER, 31);
         final LocalDate expiryDate = LocalDate.of(2014, APRIL, 1);
-        final AccountEntity account = new AccountEntity(person, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "Comment");
+        final AccountEntity account = new AccountEntity(personEntity, validFrom, validTo, true, expiryDate, TEN, TEN, TEN, "Comment");
 
         final String accountToString = account.toString();
-        assertThat(accountToString).isEqualTo("Account{person=Person{id='10'}, validFrom=2014-01-01, " +
+        assertThat(accountToString).isEqualTo("Account{person=PersonEntity{id='10'}, validFrom=2014-01-01, " +
             "validTo=2014-12-31, doRemainingVacationDaysExpire=true, expiryDate=2014-04-01, annualVacationDays=10, " +
             "actualVacationDays=null, remainingVacationDays=10, remainingVacationDaysNotExpiring=10}");
     }

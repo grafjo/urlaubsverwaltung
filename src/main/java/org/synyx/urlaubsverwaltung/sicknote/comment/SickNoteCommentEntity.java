@@ -18,6 +18,9 @@ import static org.hibernate.annotations.OnDeleteAction.CASCADE;
 @Entity(name = "sick_note_comment")
 public class SickNoteCommentEntity extends AbstractComment {
 
+    // TODO requires domain object
+    // TODO use PersonEntity
+
     @NotNull
     @Column(name = "sick_note_id")
     @OnDelete(action = CASCADE)

@@ -440,6 +440,9 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     private DepartmentEntity mapToDepartmentEntityWithoutMembers(Department department) {
+
+        // TODO use PersonEntity in departmentEntity
+
         final DepartmentEntity departmentEntity = new DepartmentEntity();
 
         departmentEntity.setId(department.getId());
@@ -454,6 +457,8 @@ class DepartmentServiceImpl implements DepartmentService {
     }
 
     private List<DepartmentMemberEmbeddable> updatedDepartmentMembers(List<Person> nextPersons, List<DepartmentMemberEmbeddable> currentMembers) {
+
+        // TODO use PersonEntity
 
         final List<DepartmentMemberEmbeddable> list = new ArrayList<>();
         final Instant now = Instant.now(clock);

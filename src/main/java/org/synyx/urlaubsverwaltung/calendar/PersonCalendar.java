@@ -15,6 +15,8 @@ import java.time.Period;
 @Entity
 class PersonCalendar {
 
+    // TODO requires entity
+
     private static final int SECRET_LENGTH = 32;
 
     @Id

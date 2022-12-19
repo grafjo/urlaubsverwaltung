@@ -22,6 +22,8 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "sick_note")
 class SickNoteEntity {
 
+    // TODO use PersonEntity
+
     @Id
     @GeneratedValue
     private Integer id;

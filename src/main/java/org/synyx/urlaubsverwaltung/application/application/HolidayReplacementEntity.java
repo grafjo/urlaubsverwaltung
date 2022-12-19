@@ -2,6 +2,7 @@ package org.synyx.urlaubsverwaltung.application.application;
 
 import org.springframework.beans.BeanUtils;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonEntity;
 
 import javax.persistence.Embeddable;
 import javax.persistence.JoinColumn;
@@ -15,15 +16,15 @@ public class HolidayReplacementEntity {
     @NotNull
     @OneToOne
     @JoinColumn(name = "person_id", nullable = false)
-    private Person person;
+    private PersonEntity person;
 
     private String note;
 
-    public Person getPerson() {
+    public PersonEntity getPerson() {
         return person;
     }
 
-    public void setPerson(Person person) {
+    public void setPerson(PersonEntity person) {
         this.person = person;
     }
 

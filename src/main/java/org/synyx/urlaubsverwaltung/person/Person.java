@@ -1,19 +1,13 @@
 package org.synyx.urlaubsverwaltung.person;
 
-import org.hibernate.annotations.LazyCollection;
-
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableCollection;
-import static javax.persistence.EnumType.STRING;
-import static org.hibernate.annotations.LazyCollectionOption.FALSE;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 import static org.springframework.util.StringUtils.hasText;
 import static org.synyx.urlaubsverwaltung.person.Role.INACTIVE;
 import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
@@ -21,11 +15,8 @@ import static org.synyx.urlaubsverwaltung.person.Role.privilegedRoles;
 /**
  * This class describes a person.
  */
-@Entity
 public class Person {
 
-    @Id
-    @GeneratedValue
     private Integer id;
 
     private String username;
@@ -34,15 +25,9 @@ public class Person {
     private String firstName;
     private String email;
 
-    @ElementCollection
-    @LazyCollection(FALSE)
-    @Enumerated(STRING)
-    private Collection<Role> permissions;
+    private List<Role> permissions;
 
-    @ElementCollection
-    @LazyCollection(FALSE)
-    @Enumerated(STRING)
-    private Collection<MailNotification> notifications;
+    private List<MailNotification> notifications;
 
     public Person() {
         /* OK */
@@ -103,16 +88,16 @@ public class Person {
         this.password = password;
     }
 
-    public void setPermissions(Collection<Role> permissions) {
+    public void setPermissions(List<Role> permissions) {
         this.permissions = permissions;
     }
 
-    public Collection<Role> getPermissions() {
+    public List<Role> getPermissions() {
         if (permissions == null) {
             return emptyList();
         }
 
-        return unmodifiableCollection(permissions);
+        return unmodifiableList(permissions);
     }
 
     public boolean hasRole(final Role role) {
@@ -133,15 +118,15 @@ public class Person {
             .anyMatch(role -> privilegedRoles().contains(role));
     }
 
-    public Collection<MailNotification> getNotifications() {
+    public List<MailNotification> getNotifications() {
         if (notifications == null) {
             notifications = emptyList();
         }
 
-        return unmodifiableCollection(notifications);
+        return unmodifiableList(notifications);
     }
 
-    public void setNotifications(Collection<MailNotification> notifications) {
+    public void setNotifications(List<MailNotification> notifications) {
         this.notifications = notifications;
     }
 

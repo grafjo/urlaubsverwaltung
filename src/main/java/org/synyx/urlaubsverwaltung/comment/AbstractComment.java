@@ -21,6 +21,9 @@ import static java.util.Optional.ofNullable;
 @MappedSuperclass
 public abstract class AbstractComment {
 
+    // TODO requires entity
+    // TODO use PersonEntity
+
     @Id
     @GeneratedValue
     private Integer id;

@@ -3,6 +3,7 @@ package org.synyx.urlaubsverwaltung.account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonMapper;
 import org.synyx.urlaubsverwaltung.settings.SettingsService;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import static java.util.stream.Collectors.toList;
+import static org.synyx.urlaubsverwaltung.person.PersonMapper.toPersonEntity;
 
 /**
  * Implementation of {@link AccountService}.
@@ -52,7 +54,7 @@ public class AccountServiceImpl implements AccountService {
 
     private Account mapToAccount(AccountEntity accountEntity, boolean doRemainingVacationDaysExpireGlobally) {
         final Account account = new Account(
-            accountEntity.getPerson(),
+            PersonMapper.toPerson(accountEntity.getPerson()),
             accountEntity.getValidFrom(),
             accountEntity.getValidTo(),
             accountEntity.isDoRemainingVacationDaysExpire(),
@@ -71,7 +73,7 @@ public class AccountServiceImpl implements AccountService {
 
     private AccountEntity mapToAccountEntity(Account account) {
         final AccountEntity accountEntity = new AccountEntity(
-            account.getPerson(),
+            toPersonEntity(account.getPerson()),
             account.getValidFrom(),
             account.getValidTo(),
             account.isDoRemainingVacationDaysExpireLocally(),

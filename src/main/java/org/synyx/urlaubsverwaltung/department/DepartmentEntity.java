@@ -23,6 +23,8 @@ import static org.hibernate.annotations.LazyCollectionOption.FALSE;
 @Entity(name = "department")
 class DepartmentEntity {
 
+    // TODO use personEntity
+
     @Id
     @GeneratedValue
     private Integer id;

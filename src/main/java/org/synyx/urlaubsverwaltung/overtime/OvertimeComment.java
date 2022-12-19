@@ -19,6 +19,9 @@ import static javax.persistence.EnumType.STRING;
 @Entity
 public class OvertimeComment extends AbstractComment {
 
+    // TODO requires entity
+    // TODO use PersonEntity
+
     @ManyToOne
     private Overtime overtime;
 

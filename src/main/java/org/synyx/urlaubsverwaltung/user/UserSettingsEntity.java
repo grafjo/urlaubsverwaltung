@@ -24,6 +24,7 @@ class UserSettingsEntity {
     @Column(name = "person_id")
     private Integer personId;
 
+    // TODO use PersonEntity
     @OneToOne(fetch = LAZY)
     @PrimaryKeyJoinColumn(name = "person_id", referencedColumnName = "id")
     private Person person;

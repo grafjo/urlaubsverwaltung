@@ -29,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.in;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.synyx.urlaubsverwaltung.TestDataCreator.createPerson;
+import static org.synyx.urlaubsverwaltung.TestDataCreator.createPersonEntity;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_BOSS_ALL;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_OFFICE;
 import static org.synyx.urlaubsverwaltung.person.MailNotification.NOTIFICATION_USER;
@@ -80,7 +82,7 @@ class PersonServiceImplTest {
 
     @Test
     void ensureDefaultAccountAndWorkingTimeCreation() {
-        when(personRepository.save(any(Person.class))).thenReturn(new Person());
+        when(personRepository.save(any(PersonEntity.class))).thenReturn(new PersonEntity());
 
         sut.create("rick", "Grimes", "Rick", "rick@grimes.de", emptyList(), emptyList());
         verify(accountInteractionService).createDefaultAccount(any(Person.class));
@@ -93,7 +95,10 @@ class PersonServiceImplTest {
         final Person activePerson = createPerson("my person", USER);
         activePerson.setId(1);
 
-        when(personRepository.save(activePerson)).thenReturn(activePerson);
+        final PersonEntity personEntity = createPersonEntity(activePerson.getUsername(), USER);
+        personEntity.setId(1);
+
+        when(personRepository.save(personEntity)).thenReturn(personEntity);
 
         sut.create(activePerson);
 
@@ -106,10 +111,20 @@ class PersonServiceImplTest {
     void ensureCreatedPersonHasCorrectAttributes() {
 
         final Person person = new Person("rick", "Grimes", "Rick", "rick@grimes.de");
+        person.setId(1);
         person.setPermissions(asList(USER, BOSS));
         person.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
-        when(personRepository.save(person)).thenReturn(person);
+        final PersonEntity personEntity = new PersonEntity();
+        personEntity.setId(person.getId());
+        personEntity.setUsername(person.getUsername());
+        personEntity.setLastName(person.getLastName());
+        personEntity.setFirstName(person.getFirstName());
+        personEntity.setEmail(person.getEmail());
+        personEntity.setPermissions(person.getPermissions());
+        personEntity.setNotifications(person.getNotifications());
+
+        when(personRepository.save(any())).thenReturn(personEntity);
 
         final Person createdPerson = sut.create(person);
         assertThat(createdPerson.getUsername()).isEqualTo("rick");
@@ -125,15 +140,23 @@ class PersonServiceImplTest {
             .hasSize(2)
             .contains(USER, BOSS);
 
-        verify(accountInteractionService).createDefaultAccount(person);
-        verify(workingTimeWriteService).createDefaultWorkingTime(person);
+        verify(accountInteractionService).createDefaultAccount(createdPerson);
+        verify(workingTimeWriteService).createDefaultWorkingTime(createdPerson);
     }
 
     @Test
     void ensureCreatedPersonIsPersisted() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personRepository.save(person)).thenReturn(person);
+        person.setId(1);
+        final PersonEntity personEntity = new PersonEntity();
+        personEntity.setId(person.getId());
+        personEntity.setUsername(person.getUsername());
+        personEntity.setLastName(person.getLastName());
+        personEntity.setFirstName(person.getFirstName());
+        personEntity.setEmail(person.getEmail());
+
+        when(personRepository.save(any())).thenReturn(personEntity);
 
         final Person savedPerson = sut.create(person);
         assertThat(savedPerson).isEqualTo(person);
@@ -144,7 +167,15 @@ class PersonServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
-        when(personRepository.save(person)).thenReturn(person);
+
+        final PersonEntity personEntity = new PersonEntity();
+        personEntity.setId(person.getId());
+        personEntity.setUsername(person.getUsername());
+        personEntity.setLastName(person.getLastName());
+        personEntity.setFirstName(person.getFirstName());
+        personEntity.setEmail(person.getEmail());
+
+        when(personRepository.save(personEntity)).thenReturn(personEntity);
 
         final Person createdPerson = sut.create(person);
 
@@ -161,10 +192,18 @@ class PersonServiceImplTest {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setId(1);
-        when(personRepository.save(person)).thenReturn(person);
+
+        final PersonEntity personEntity = new PersonEntity();
+        personEntity.setId(person.getId());
+        personEntity.setUsername(person.getUsername());
+        personEntity.setLastName(person.getLastName());
+        personEntity.setFirstName(person.getFirstName());
+        personEntity.setEmail(person.getEmail());
+
+        when(personRepository.save(personEntity)).thenReturn(personEntity);
 
         sut.update(person);
-        verify(personRepository).save(person);
+        verify(personRepository).save(personEntity);
     }
 
     @Test
@@ -180,7 +219,15 @@ class PersonServiceImplTest {
     void ensureSaveCallsCorrectDaoMethod() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personRepository.save(person)).thenReturn(person);
+        person.setId(1);
+        final PersonEntity personEntity = new PersonEntity();
+        personEntity.setId(person.getId());
+        personEntity.setUsername(person.getUsername());
+        personEntity.setLastName(person.getLastName());
+        personEntity.setFirstName(person.getFirstName());
+        personEntity.setEmail(person.getEmail());
+
+        when(personRepository.save(any())).thenReturn(personEntity);
 
         final Person savedPerson = sut.create(person);
         assertThat(savedPerson).isEqualTo(person);
@@ -213,15 +260,39 @@ class PersonServiceImplTest {
     void ensureGetActivePersonsReturnsOnlyPersonsThatHaveNotInactiveRole() {
 
         final Person user = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        user.setId(3);
         user.setPermissions(List.of(USER));
+        final PersonEntity userEntity = new PersonEntity();
+        userEntity.setId(user.getId());
+        userEntity.setUsername(user.getUsername());
+        userEntity.setLastName(user.getLastName());
+        userEntity.setFirstName(user.getFirstName());
+        userEntity.setEmail(user.getEmail());
+        userEntity.setPermissions(user.getPermissions());
 
         final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        boss.setId(2);
         boss.setPermissions(asList(USER, BOSS));
+        final PersonEntity bossEntity = new PersonEntity();
+        bossEntity.setId(boss.getId());
+        bossEntity.setUsername(boss.getUsername());
+        bossEntity.setLastName(boss.getLastName());
+        bossEntity.setFirstName(boss.getFirstName());
+        bossEntity.setEmail(boss.getEmail());
+        bossEntity.setPermissions(boss.getPermissions());
 
         final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        office.setId(1);
         office.setPermissions(asList(USER, BOSS, OFFICE));
+        final PersonEntity officeEntity = new PersonEntity();
+        officeEntity.setId(office.getId());
+        officeEntity.setUsername(office.getUsername());
+        officeEntity.setLastName(office.getLastName());
+        officeEntity.setFirstName(office.getFirstName());
+        officeEntity.setEmail(office.getEmail());
+        officeEntity.setPermissions(office.getPermissions());
 
-        when(personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE)).thenReturn(List.of(user, boss, office));
+        when(personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE)).thenReturn(List.of(userEntity, bossEntity, officeEntity));
 
         final List<Person> activePersons = sut.getActivePersons();
         assertThat(activePersons)
@@ -234,41 +305,59 @@ class PersonServiceImplTest {
     @Test
     void ensureGetActivePersonsPage() {
 
-        final Page<Person> expected = Page.empty();
+        final Page<PersonEntity> pageEntity = Page.empty();
         final PageRequest pageRequest = PageRequest.of(1, 100);
         final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(pageRequest, "name-query");
 
-        when(personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequest)).thenReturn(expected);
+        when(personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequest)).thenReturn(pageEntity);
 
         final Page<Person> actual = sut.getActivePersons(personPageableSearchQuery);
-        assertThat(actual).isSameAs(expected);
+        assertThat(actual).isEqualTo(Page.empty());
     }
 
     @Test
     void ensureGetInactivePersonsPage() {
 
-        final Page<Person> expected = Page.empty();
+        final Page<PersonEntity> pageEntity = Page.empty();
         final PageRequest pageRequest = PageRequest.of(1, 100, Sort.by(Sort.Direction.ASC, "firstName"));
         final PageableSearchQuery personPageableSearchQuery = new PageableSearchQuery(pageRequest, "name-query");
 
         // currently a hard coded pageRequest is used in implementation
         final PageRequest pageRequestInternal = PageRequest.of(1, 100, Sort.Direction.ASC, "firstName", "lastName");
-        when(personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequestInternal)).thenReturn(expected);
+        when(personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, "name-query", pageRequestInternal)).thenReturn(pageEntity);
 
         final Page<Person> actual = sut.getInactivePersons(personPageableSearchQuery);
-        assertThat(actual).isSameAs(expected);
+        assertThat(actual).isEqualTo(Page.empty());
     }
 
     @Test
     void ensureGetPersonsByRoleReturnsOnlyPersonsWithTheGivenRole() {
 
         final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        boss.setId(1);
         boss.setPermissions(asList(USER, BOSS));
 
+        final PersonEntity bossEntity = new PersonEntity();
+        bossEntity.setId(boss.getId());
+        bossEntity.setUsername(boss.getUsername());
+        bossEntity.setLastName(boss.getLastName());
+        bossEntity.setFirstName(boss.getFirstName());
+        bossEntity.setEmail(boss.getEmail());
+        bossEntity.setPermissions(boss.getPermissions());
+
         final Person bossOffice = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        bossOffice.setId(2);
         bossOffice.setPermissions(asList(USER, BOSS, OFFICE));
 
-        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(BOSS, INACTIVE)).thenReturn(asList(boss, bossOffice));
+        final PersonEntity bossOfficeEntity = new PersonEntity();
+        bossOfficeEntity.setId(bossOffice.getId());
+        bossOfficeEntity.setUsername(bossOffice.getUsername());
+        bossOfficeEntity.setLastName(bossOffice.getLastName());
+        bossOfficeEntity.setFirstName(bossOffice.getFirstName());
+        bossOfficeEntity.setEmail(bossOffice.getEmail());
+        bossOfficeEntity.setPermissions(bossOffice.getPermissions());
+
+        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(BOSS, INACTIVE)).thenReturn(asList(bossEntity, bossOfficeEntity));
 
         final List<Person> filteredList = sut.getActivePersonsByRole(BOSS);
         assertThat(filteredList)
@@ -281,14 +370,34 @@ class PersonServiceImplTest {
     void ensureGetPersonsByNotificationTypeReturnsOnlyPersonsWithTheGivenNotificationType() {
 
         final Person boss = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        boss.setId(1);
         boss.setPermissions(asList(USER, BOSS));
         boss.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL));
 
+        final PersonEntity bossEntity = new PersonEntity();
+        bossEntity.setId(boss.getId());
+        bossEntity.setUsername(boss.getUsername());
+        bossEntity.setLastName(boss.getLastName());
+        bossEntity.setFirstName(boss.getFirstName());
+        bossEntity.setEmail(boss.getEmail());
+        bossEntity.setPermissions(boss.getPermissions());
+        bossEntity.setNotifications(boss.getNotifications());
+
         final Person office = new Person("muster", "Muster", "Marlene", "muster@example.org");
+        office.setId(2);
         office.setPermissions(asList(USER, BOSS, OFFICE));
         office.setNotifications(asList(NOTIFICATION_USER, NOTIFICATION_BOSS_ALL, NOTIFICATION_OFFICE));
 
-        when(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_BOSS_ALL)).thenReturn(List.of(boss, office));
+        final PersonEntity officeEntity = new PersonEntity();
+        officeEntity.setId(office.getId());
+        officeEntity.setUsername(office.getUsername());
+        officeEntity.setLastName(office.getLastName());
+        officeEntity.setFirstName(office.getFirstName());
+        officeEntity.setEmail(office.getEmail());
+        officeEntity.setPermissions(office.getPermissions());
+        officeEntity.setNotifications(office.getNotifications());
+
+        when(personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, NOTIFICATION_BOSS_ALL)).thenReturn(List.of(bossEntity, officeEntity));
 
         final List<Person> filteredList = sut.getActivePersonsWithNotificationType(NOTIFICATION_BOSS_ALL);
         assertThat(filteredList)
@@ -307,7 +416,16 @@ class PersonServiceImplTest {
     void ensureReturnsPersonForCurrentlySignedInUser() {
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
-        when(personRepository.findByUsername("muster")).thenReturn(Optional.of(person));
+        person.setId(1);
+
+        final PersonEntity personEntity = new PersonEntity();
+        personEntity.setId(person.getId());
+        personEntity.setUsername(person.getUsername());
+        personEntity.setLastName(person.getLastName());
+        personEntity.setFirstName(person.getFirstName());
+        personEntity.setEmail(person.getEmail());
+
+        when(personRepository.findByUsername("muster")).thenReturn(Optional.of(personEntity));
 
         final Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(person.getUsername());
@@ -345,7 +463,12 @@ class PersonServiceImplTest {
 
         final Person officePerson = new Person();
         officePerson.setPermissions(List.of(OFFICE));
-        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE, INACTIVE)).thenReturn(List.of(officePerson));
+
+        final PersonEntity officePersonEntity = new PersonEntity();
+        officePersonEntity.setPermissions(officePerson.getPermissions());
+
+
+        when(personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(OFFICE, INACTIVE)).thenReturn(List.of(officePersonEntity));
 
         final Person person = new Person("muster", "Muster", "Marlene", "muster@example.org");
         person.setPermissions(List.of(USER));
@@ -361,7 +484,11 @@ class PersonServiceImplTest {
 
         final Person activePerson = createPerson("active person", USER);
         activePerson.setId(1);
-        when(personRepository.save(activePerson)).thenReturn(activePerson);
+
+        final PersonEntity activePersonEntity = createPersonEntity(activePerson.getUsername(), USER);
+        activePersonEntity.setId(activePerson.getId());
+
+        when(personRepository.save(activePersonEntity)).thenReturn(activePersonEntity);
 
         sut.update(activePerson);
         verify(applicationEventPublisher).publishEvent(any(PersonUpdatedEvent.class));
@@ -372,7 +499,11 @@ class PersonServiceImplTest {
 
         final Person inactivePerson = createPerson("inactive person", INACTIVE);
         inactivePerson.setId(1);
-        when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
+
+        final PersonEntity inactivePersonEntity = createPersonEntity(inactivePerson.getUsername(), INACTIVE);
+        inactivePersonEntity.setId(inactivePerson.getId());
+
+        when(personRepository.save(inactivePersonEntity)).thenReturn(inactivePersonEntity);
 
         sut.update(inactivePerson);
         verify(applicationEventPublisher).publishEvent(any(PersonDisabledEvent.class));
@@ -383,7 +514,12 @@ class PersonServiceImplTest {
 
         final Person inactivePerson = createPerson("inactive person", USER);
         inactivePerson.setId(1);
-        when(personRepository.save(inactivePerson)).thenReturn(inactivePerson);
+
+        final PersonEntity inactivePersonEntity = createPersonEntity(inactivePerson.getUsername(), USER);
+        inactivePersonEntity.setId(inactivePerson.getId());
+
+
+        when(personRepository.save(inactivePersonEntity)).thenReturn(inactivePersonEntity);
 
         sut.update(inactivePerson);
         verify(applicationEventPublisher, never()).publishEvent(any(PersonDisabledEvent.class));
@@ -406,6 +542,9 @@ class PersonServiceImplTest {
         final Person person = new Person();
         final int personId = 42;
         person.setId(personId);
+
+        final PersonEntity personEntity = new PersonEntity();
+        personEntity.setId(personId);
         when(personRepository.existsById(personId)).thenReturn(true);
 
         sut.delete(person, signedInUser);
@@ -419,7 +558,7 @@ class PersonServiceImplTest {
 
         inOrder.verify(accountInteractionService).deleteAllByPerson(person);
         inOrder.verify(workingTimeWriteService).deleteAllByPerson(person);
-        inOrder.verify(personRepository).delete(person);
+        inOrder.verify(personRepository).deleteById(personId);
     }
 
     @Test

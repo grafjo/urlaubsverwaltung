@@ -6,6 +6,7 @@ import org.synyx.urlaubsverwaltung.application.vacationtype.VacationTypeEntity;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.period.Period;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonEntity;
 
 import javax.persistence.CollectionTable;
 import javax.persistence.Convert;
@@ -32,29 +33,38 @@ import static org.synyx.urlaubsverwaltung.application.application.ApplicationSta
 /**
  * This class describes an application for leave.
  */
-public class Application {
+@Entity(name = "application")
+public class ApplicationEntity {
 
+    // TODO requires entity
+
+    @Id
+    @GeneratedValue
     private Integer id;
 
     /**
      * Person that will be on vacation if this application for leave is allowed.
      */
-    private Person person;
+    @ManyToOne
+    private PersonEntity person;
 
     /**
      * Person that made the application - can be different to the person that will be on vacation.
      */
-    private Person applier;
+    @ManyToOne
+    private PersonEntity applier;
 
     /**
      * Person that allowed or rejected the application for leave.
      */
-    private Person boss;
+    @ManyToOne
+    private PersonEntity boss;
 
     /**
      * Person that cancelled the application.
      */
-    private Person canceller;
+    @ManyToOne
+    private PersonEntity canceller;
 
     /**
      * Flag for two stage approval process.
@@ -90,11 +100,13 @@ public class Application {
     /**
      * Type of vacation, e.g. holiday, special leave etc.
      */
+    @ManyToOne
     private VacationTypeEntity vacationType;
 
     /**
      * Day length of the vacation period, e.g. full day, morning, noon.
      */
+    @Enumerated(STRING)
     private DayLength dayLength;
 
     /**
@@ -102,6 +114,9 @@ public class Application {
      */
     private String reason;
 
+    @LazyCollection(FALSE)
+    @CollectionTable(name = "holiday_replacements", joinColumns = @JoinColumn(name = "application_id"))
+    @ElementCollection
     private List<HolidayReplacementEntity> holidayReplacements = new ArrayList<>();
 
     /**
@@ -192,27 +207,27 @@ public class Application {
         this.editedDate = editedDate;
     }
 
-    public Person getApplier() {
+    public PersonEntity getApplier() {
         return applier;
     }
 
-    public void setApplier(Person applier) {
+    public void setApplier(PersonEntity applier) {
         this.applier = applier;
     }
 
-    public Person getBoss() {
+    public PersonEntity getBoss() {
         return boss;
     }
 
-    public void setBoss(Person boss) {
+    public void setBoss(PersonEntity boss) {
         this.boss = boss;
     }
 
-    public Person getCanceller() {
+    public PersonEntity getCanceller() {
         return canceller;
     }
 
-    public void setCanceller(Person canceller) {
+    public void setCanceller(PersonEntity canceller) {
         this.canceller = canceller;
     }
 
@@ -256,11 +271,11 @@ public class Application {
         this.dayLength = dayLength;
     }
 
-    public Person getPerson() {
+    public PersonEntity getPerson() {
         return person;
     }
 
-    public void setPerson(Person person) {
+    public void setPerson(PersonEntity person) {
         this.person = person;
     }
 
@@ -434,7 +449,7 @@ public class Application {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final Application that = (Application) o;
+        final ApplicationEntity that = (ApplicationEntity) o;
         return null != this.getId() && Objects.equals(id, that.id);
     }
 

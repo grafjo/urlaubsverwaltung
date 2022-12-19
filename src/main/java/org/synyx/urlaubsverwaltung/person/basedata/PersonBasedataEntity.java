@@ -16,6 +16,8 @@ import static javax.persistence.FetchType.LAZY;
 @Table(name = "person_basedata")
 class PersonBasedataEntity {
 
+    // TODO use PersonEntity
+
     @Id
     @Column(name = "person_id")
     private Integer personId;

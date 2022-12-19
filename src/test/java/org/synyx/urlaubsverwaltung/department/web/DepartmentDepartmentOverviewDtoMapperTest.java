@@ -7,7 +7,6 @@ import org.synyx.urlaubsverwaltung.person.Role;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,9 +18,9 @@ class DepartmentDepartmentOverviewDtoMapperTest {
         final Department department = new Department();
         department.setId(42);
         final Person activePerson = new Person();
-        activePerson.setPermissions(Set.of(Role.USER));
+        activePerson.setPermissions(List.of(Role.USER));
         final Person inactivePerson = new Person();
-        inactivePerson.setPermissions(Set.of(Role.INACTIVE));
+        inactivePerson.setPermissions(List.of(Role.INACTIVE));
         department.setMembers(List.of(activePerson, inactivePerson, inactivePerson));
         department.setDescription("Some department info");
         department.setName("Department");

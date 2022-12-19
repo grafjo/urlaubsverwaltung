@@ -23,6 +23,9 @@ import static java.time.ZoneOffset.UTC;
 @Entity
 public class Overtime {
 
+    // TODO use PersonEntity
+    // TODO introduce Entity-Class
+
     @Id
     @GeneratedValue
     private Integer id;

@@ -1,6 +1,7 @@
 package org.synyx.urlaubsverwaltung.account;
 
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,7 +22,7 @@ public class AccountEntity {
     private Integer id;
 
     @ManyToOne
-    private Person person;
+    private PersonEntity person;
     private LocalDate validFrom;
     private LocalDate validTo;
     private Boolean doRemainingVacationDaysExpire;
@@ -44,7 +45,7 @@ public class AccountEntity {
         /* OK */
     }
 
-    public AccountEntity(Person person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
+    public AccountEntity(PersonEntity person, LocalDate validFrom, LocalDate validTo, Boolean doRemainingVacationDaysExpire,
                          LocalDate expiryDate, BigDecimal annualVacationDays, BigDecimal remainingVacationDays,
                          BigDecimal remainingVacationDaysNotExpiring, String comment) {
 
@@ -67,11 +68,11 @@ public class AccountEntity {
         this.id = id;
     }
 
-    public Person getPerson() {
+    public PersonEntity getPerson() {
         return person;
     }
 
-    public void setPerson(Person person) {
+    public void setPerson(PersonEntity person) {
         this.person = person;
     }
 

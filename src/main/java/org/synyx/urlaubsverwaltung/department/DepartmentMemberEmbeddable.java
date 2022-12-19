@@ -12,6 +12,8 @@ import java.util.Objects;
 @Embeddable
 class DepartmentMemberEmbeddable {
 
+    // TODO use PersonEntity
+
     @ManyToOne
     @JoinColumn(name = "members_id", nullable = false)
     private Person person;

@@ -12,6 +12,7 @@ import org.synyx.urlaubsverwaltung.department.Department;
 import org.synyx.urlaubsverwaltung.overtime.Overtime;
 import org.synyx.urlaubsverwaltung.period.DayLength;
 import org.synyx.urlaubsverwaltung.person.Person;
+import org.synyx.urlaubsverwaltung.person.PersonEntity;
 import org.synyx.urlaubsverwaltung.person.Role;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNote;
 import org.synyx.urlaubsverwaltung.sicknote.sicknote.SickNoteCategory;
@@ -28,6 +29,7 @@ import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
 import static java.time.DayOfWeek.FRIDAY;
@@ -55,6 +57,15 @@ public final class TestDataCreator {
         final Person person = new Person(username, username, username, username + "@example.org");
         person.setPermissions(List.of(roles));
         return person;
+    }
+    public static PersonEntity createPersonEntity(String username, Role... roles) {
+        final PersonEntity entity = new PersonEntity();
+        entity.setUsername(username);
+        entity.setLastName(username);
+        entity.setFirstName(username);
+        entity.setEmail(username + "@example.org");
+        entity.setPermissions(List.of(roles));
+        return entity;
     }
 
     // Overtime record -------------------------------------------------------------------------------------------------

@@ -18,6 +18,8 @@ import org.synyx.urlaubsverwaltung.workingtime.WorkingTimeWriteService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.lang.invoke.MethodHandles.lookup;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -61,11 +63,13 @@ class PersonServiceImpl implements PersonService {
     @Override
     public Person create(Person person) {
 
-        final Person createdPerson = personRepository.save(person);
-        LOG.info("Created person: {}", person);
+        final PersonEntity personEntity = toPersonEntity(person);
+        final PersonEntity createdPersonEntity = personRepository.save(personEntity);
+        final Person createdPerson = toPerson(createdPersonEntity);
+        LOG.info("Created person: {}", createdPerson);
 
-        accountInteractionService.createDefaultAccount(person);
-        workingTimeWriteService.createDefaultWorkingTime(person);
+        accountInteractionService.createDefaultAccount(createdPerson);
+        workingTimeWriteService.createDefaultWorkingTime(createdPerson);
 
         applicationEventPublisher.publishEvent(toPersonCreatedEvent(createdPerson));
 
@@ -79,7 +83,8 @@ class PersonServiceImpl implements PersonService {
             throw new IllegalArgumentException("Can not update a person that is not persisted yet");
         }
 
-        final Person updatedPerson = personRepository.save(person);
+        final PersonEntity personEntity = toPersonEntity(person);
+        final Person updatedPerson = toPerson(personRepository.save(personEntity));
         LOG.info("Updated person: {}", updatedPerson);
 
         if (updatedPerson.isInactive()) {
@@ -102,7 +107,7 @@ class PersonServiceImpl implements PersonService {
         applicationEventPublisher.publishEvent(new PersonDeletedEvent(person));
         accountInteractionService.deleteAllByPerson(person);
         workingTimeWriteService.deleteAllByPerson(person);
-        personRepository.delete(person);
+        personRepository.deleteById(person.getId());
 
         final String status = person.isActive() ? "active" : "inactive";
         LOG.info("person with id {} ({}) and status {} deleted by signed in user with id {}", person.getId(), person.getUsername(), status, signedInUser.getId());
@@ -110,22 +115,25 @@ class PersonServiceImpl implements PersonService {
 
     @Override
     public Optional<Person> getPersonByID(Integer id) {
-        return personRepository.findById(id);
+        return personRepository.findById(id).map(this::toPerson);
     }
 
     @Override
     public Optional<Person> getPersonByUsername(String username) {
-        return personRepository.findByUsername(username);
+        return personRepository.findByUsername(username).map(this::toPerson);
     }
 
     @Override
     public Optional<Person> getPersonByMailAddress(String mailAddress) {
-        return personRepository.findByEmail(mailAddress);
+        return personRepository.findByEmail(mailAddress).map(this::toPerson);
     }
 
     @Override
     public List<Person> getActivePersons() {
-        return personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE);
+        return personRepository.findByPermissionsNotContainingOrderByFirstNameAscLastNameAsc(INACTIVE)
+            .stream()
+            .map(this::toPerson)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -134,17 +142,25 @@ class PersonServiceImpl implements PersonService {
         final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
         final String query = personPageableSearchQuery.getQuery();
         final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
-        return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, pageRequest);
+
+        return personRepository.findByPermissionsNotContainingAndByNiceNameContainingIgnoreCase(INACTIVE, query, pageRequest)
+            .map(this::toPerson);
     }
 
     @Override
     public List<Person> getActivePersonsByRole(final Role role) {
-        return personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(role, INACTIVE);
+        return personRepository.findByPermissionsContainingAndPermissionsNotContainingOrderByFirstNameAscLastNameAsc(role, INACTIVE)
+            .stream()
+            .map(this::toPerson)
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<Person> getActivePersonsWithNotificationType(final MailNotification notification) {
-        return personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, notification);
+        return personRepository.findByPermissionsNotContainingAndNotificationsContainingOrderByFirstNameAscLastNameAsc(INACTIVE, notification)
+            .stream()
+            .map(this::toPerson)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -152,7 +168,8 @@ class PersonServiceImpl implements PersonService {
         final Pageable pageable = personPageableSearchQuery.getPageable();
         final Sort implicitSort = mapToImplicitPersonSort(pageable.getSort());
         final PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), implicitSort);
-        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, personPageableSearchQuery.getQuery(), pageRequest);
+        return personRepository.findByPermissionsContainingAndNiceNameContainingIgnoreCase(INACTIVE, personPageableSearchQuery.getQuery(), pageRequest)
+            .map(this::toPerson);
     }
 
     @Override
@@ -192,7 +209,9 @@ class PersonServiceImpl implements PersonService {
         permissions.add(OFFICE);
         person.setPermissions(permissions);
 
-        final Person savedPerson = personRepository.save(person);
+        final PersonEntity personEntity = toPersonEntity(person);
+        final PersonEntity savedPersonEntity = personRepository.save(personEntity);
+        final Person savedPerson = toPerson(savedPersonEntity);
 
         LOG.info("Add 'OFFICE' role to person: {}", person);
 
@@ -237,5 +256,29 @@ class PersonServiceImpl implements PersonService {
 
     private PersonDisabledEvent toPersonDisabledEvent(Person person) {
         return new PersonDisabledEvent(this, person.getId(), person.getNiceName(), person.getUsername(), person.getEmail());
+    }
+
+    private PersonEntity toPersonEntity(Person person) {
+        final PersonEntity entity = new PersonEntity();
+        entity.setId(person.getId());
+        entity.setUsername(person.getUsername());
+        entity.setPassword(person.getPassword());
+        entity.setLastName(person.getLastName());
+        entity.setFirstName(person.getFirstName());
+        entity.setEmail(person.getEmail());
+        entity.setPermissions(person.getPermissions());
+        entity.setNotifications(person.getNotifications());
+
+        return entity;
+    }
+
+    private Person toPerson(PersonEntity personEntity) {
+
+        final Person person = new Person(personEntity.getUsername(), personEntity.getLastName(), personEntity.getFirstName(), personEntity.getEmail());
+        person.setId(personEntity.getId());
+        person.setPassword(personEntity.getPassword());
+        person.setPermissions(personEntity.getPermissions());
+        person.setNotifications(personEntity.getNotifications());
+        return person;
     }
 }
